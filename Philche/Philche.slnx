@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Philche.Core/">
+    <Project Path="Philche.Core/Philche.Core.csproj" />
+  </Folder>
+  <Folder Name="/Philche.Core.Test/">
+    <Project Path="Philche.Core.Test/Philche.Core.Test.csproj" />
+  </Folder>
+  <Folder Name="/Philche.Tray/">
+    <Project Path="Philche.Tray/Philche.Tray.csproj" />
+  </Folder>
+</Solution>

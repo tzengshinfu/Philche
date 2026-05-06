@@ -1,0 +1,117 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Philche.Tray.App">
+    <Application.Resources>
+        <!-- Parchment Decree Palette -->
+        <SolidColorBrush x:Key="ParchmentBg" Color="#f3f3f3" />
+        <SolidColorBrush x:Key="ParchmentBorder" Color="#D1C3A5" />
+        <SolidColorBrush x:Key="DecreeTextPrimary" Color="#1E1916" />
+        <SolidColorBrush x:Key="DecreeTextMaroon" Color="#8B2E24" />
+        <SolidColorBrush x:Key="DecreeHighlight" Color="#e5deca" />
+        <FontFamily x:Key="DecreeFont">Georgia, 'Times New Roman', Times, serif</FontFamily>
+
+        <!-- Checkbox Theme Overrides -->
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="Transparent" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="Transparent" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed" Color="Transparent" />
+        <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="#8B2E24" />
+        <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" Color="#8B2E24" />
+        <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" Color="#8B2E24" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeChecked" Color="#D1C3A5" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="#8B2E24" />
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed" Color="#8B2E24" />
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+
+        <!-- Global Application Theme -->
+        <Style Selector="Window">
+            <Setter Property="Background" Value="{StaticResource ParchmentBg}" />
+            <Setter Property="FontFamily" Value="{StaticResource DecreeFont}" />
+            <Setter Property="Foreground" Value="{StaticResource DecreeTextPrimary}" />
+        </Style>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource DecreeFont}" />
+            <Setter Property="Foreground" Value="{StaticResource DecreeTextPrimary}" />
+        </Style>
+
+        <!-- Specific Accent Elements -->
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#fffdf8" />
+            <Setter Property="Foreground" Value="{StaticResource DecreeTextPrimary}" />
+            <Setter Property="BorderBrush" Value="{StaticResource ParchmentBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FontFamily" Value="{StaticResource DecreeFont}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource DecreeHighlight}" />
+            <Setter Property="Foreground" Value="{StaticResource DecreeTextPrimary}" />
+            <Setter Property="BorderBrush" Value="{StaticResource DecreeTextMaroon}" />
+        </Style>
+        <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource ParchmentBorder}" />
+            <Setter Property="Foreground" Value="{StaticResource DecreeTextMaroon}" />
+        </Style>
+
+        <!-- Form Elements -->
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="#fffdf8" />
+            <Setter Property="BorderBrush" Value="{StaticResource ParchmentBorder}" />
+            <Setter Property="FontFamily" Value="{StaticResource DecreeFont}" />
+            <Setter Property="Foreground" Value="{StaticResource DecreeTextPrimary}" />
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="#fffdf8" />
+            <Setter Property="BorderBrush" Value="{StaticResource ParchmentBorder}" />
+            <Setter Property="FontFamily" Value="{StaticResource DecreeFont}" />
+            <Setter Property="Foreground" Value="{StaticResource DecreeTextPrimary}" />
+        </Style>
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="#fffdf8" />
+            <Setter Property="BorderBrush" Value="{StaticResource ParchmentBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FontFamily" Value="{StaticResource DecreeFont}" />
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource DecreeHighlight}" />
+        </Style>
+
+        <!-- Tab Control -->
+        <Style Selector="TabItem">
+            <Setter Property="FontFamily" Value="{StaticResource DecreeFont}" />
+            <Setter Property="Foreground" Value="{StaticResource DecreeTextPrimary}" />
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+        <Style Selector="TabItem:selected">
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{StaticResource DecreeTextMaroon}" />
+        </Style>
+
+        <!-- Global Borders -->
+        <Style Selector="Border">
+            <Setter Property="BorderBrush" Value="{StaticResource ParchmentBorder}" />
+        </Style>
+    </Application.Styles>
+
+    <TrayIcon.Icons>
+        <TrayIcons>
+            <TrayIcon ToolTipText="tray.tooltip.protected" Icon="/Assets/app.ico" Clicked="TrayIcon_Clicked">
+                <TrayIcon.Menu>
+                    <NativeMenu>
+                        <NativeMenuItem Header="tray.menu.scanOnStartup" ToggleType="CheckBox" Click="ScanOnStartupToggle_Click" />
+                        <NativeMenuItem Header="tray.menu.periodicScan" ToggleType="CheckBox" Click="PeriodicScanToggle_Click" />
+                        <NativeMenuItem Header="tray.menu.realtimeScan" ToggleType="CheckBox" Click="RealtimeScanToggle_Click" />
+                        <NativeMenuItemSeparator />
+                        <NativeMenuItem Header="tray.action.start" Click="ScanAction_Click" />
+                        <NativeMenuItemSeparator />
+                        <NativeMenuItem Header="tray.menu.openSettings" Click="OpenSettings_Click" />
+                        <NativeMenuItemSeparator />
+                        <NativeMenuItem Header="tray.menu.exit" Click="Exit_Click" />
+                    </NativeMenu>
+                </TrayIcon.Menu>
+            </TrayIcon>
+        </TrayIcons>
+    </TrayIcon.Icons>
+</Application>

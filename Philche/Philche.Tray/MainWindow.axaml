@@ -1,0 +1,240 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Philche.Tray.MainWindow"
+        Width="1200"
+        Height="760"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/app.ico"
+        Title="Philche Settings">
+    <Grid RowDefinitions="Auto,*,Auto" Margin="12" RowSpacing="10">
+        <Grid ColumnDefinitions="Auto,220,Auto,220,*" ColumnSpacing="8">
+            <TextBlock x:Name="TitleTextBlock"
+                       Grid.Column="0"
+                       Text="Philche Settings"
+                       FontSize="28"
+                       FontWeight="Black"
+                       Foreground="{StaticResource DecreeTextPrimary}"
+                       VerticalAlignment="Center" />
+            <TextBlock x:Name="LocaleLabelTextBlock"
+                       Grid.Column="2"
+                       VerticalAlignment="Center"
+                       Text="Locale" />
+            <ComboBox x:Name="LocaleComboBox"
+                      Grid.Column="3"
+                      SelectedIndex="0" />
+            <Button x:Name="SaveLocaleButton"
+                    Grid.Column="4"
+                    HorizontalAlignment="Left"
+                    Width="120"
+                    Content="Save Locale"
+                    Click="SaveLocale_Click" />
+        </Grid>
+
+        <TabControl x:Name="RootTabControl" Grid.Row="1">
+            <TabItem x:Name="AgentCatalogTabItem" Header="Agent Catalog">
+                <Grid ColumnDefinitions="360,*" ColumnSpacing="12" RowDefinitions="Auto,*,Auto" Margin="0,8,0,0">
+                    <TextBlock Grid.Row="0" Grid.Column="0" x:Name="AgentsHeaderTextBlock" Text="Agents" FontWeight="SemiBold" Margin="0,0,0,8" />
+
+                    <ListBox Grid.Row="1" Grid.Column="0" x:Name="AgentsListBox" MinHeight="420" Margin="0,0,0,8">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}">
+                                    <TextBlock.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Move Up"
+                                                      Click="MoveAgentUp_Click"
+                                                      CommandParameter="{Binding}" />
+                                            <MenuItem Header="Move Down"
+                                                      Click="MoveAgentDown_Click"
+                                                      CommandParameter="{Binding}" />
+                                        </ContextMenu>
+                                    </TextBlock.ContextMenu>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                        <Button x:Name="AddAgentButton" Content="Add" Width="90" Click="AddAgent_Click" />
+                        <Button x:Name="DeleteAgentButton" Content="Delete" Width="90" Click="DeleteAgent_Click" />
+                        <Button x:Name="ReloadAgentButton" Content="Reload" Width="90" Click="Reload_Click" />
+                    </StackPanel>
+
+                    <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" Margin="0,0,4,8">
+                        <TextBlock Grid.Row="0" x:Name="AgentKeyLabelTextBlock" Text="Agent Key" Margin="0,0,0,8" />
+                        <TextBox Grid.Row="1" x:Name="AgentKeyTextBox" Margin="0,0,0,8" />
+
+                        <TextBlock Grid.Row="2" x:Name="DisplayNameLabelTextBlock" Text="Display Name" Margin="0,0,0,8" />
+                        <TextBox Grid.Row="3" x:Name="DisplayNameTextBox" Margin="0,0,0,8" />
+
+                        <TextBlock Grid.Row="4" x:Name="SkillsPathsLabelTextBlock" Text="Skills Paths" Margin="0,0,0,8" />
+                        <Border Grid.Row="5" BorderThickness="1" Padding="8">
+                            <Grid RowDefinitions="*,Auto">
+                                <ListBox Grid.Row="0" x:Name="SkillsPathsListBox" Margin="0,0,0,8">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="8">
+                                                <CheckBox Content="Default"
+                                                          IsChecked="{Binding Default, Mode=OneWay}"
+                                                          IsEnabled="False"
+                                                          VerticalAlignment="Center" />
+                                                <CheckBox Grid.Column="1"
+                                                          Content="Trusted"
+                                                          IsChecked="{Binding Trusted, Mode=TwoWay}"
+                                                          VerticalAlignment="Center" />
+                                                <TextBox Grid.Column="2"
+                                                         Text="{Binding Path, Mode=TwoWay}"
+                                                         IsReadOnly="{Binding Default, Mode=OneWay}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
+                                    <Button x:Name="AddSkillsPathButton" Content="Add Path" Width="100" Click="AddSkillsPath_Click" />
+                                    <Button x:Name="RemoveSkillsPathButton" Content="Remove" Width="100" Click="RemoveSkillsPath_Click" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
+                        <Button x:Name="ApplySelectedButton" Content="Apply To Selected" Width="150" Click="ApplySelected_Click" />
+                        <Button x:Name="SaveSettingsButton" Content="Save Settings.yaml" Width="170" Click="Save_Click" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="ScanProgressTabItem" Header="Scan Progress">
+                <Grid Margin="0,8,0,0" RowDefinitions="Auto,Auto,*,Auto" RowSpacing="12">
+                    <ProgressBar x:Name="ScanProgressBar" Grid.Row="0" Minimum="0" Maximum="100"
+                                 Value="{Binding ProgressPercentage, Mode=OneWay}"
+                                 IsVisible="{Binding IsProgressVisible, Mode=OneWay}"
+                                 IsIndeterminate="{Binding IsIndeterminate, Mode=OneWay}"
+                                 Height="14" />
+
+                    <TextBlock x:Name="ScanProgressStatusTextBlock" Grid.Row="1"
+                               Text="{Binding StatusText, Mode=OneWay}"
+                               FontWeight="SemiBold" />
+
+                    <ListBox x:Name="ScanProgressListBox" Grid.Row="2" ItemsSource="{Binding Files}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayText}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <Button x:Name="PauseResumeScanButton" Grid.Row="3" Width="130"
+                            HorizontalAlignment="Right"
+                            Content="{Binding PauseResumeButtonText, Mode=OneWay}"
+                            Click="PauseResumeScan_Click" />
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="RiskReviewTabItem" Header="Risk Review">
+                <Grid Margin="0,8,0,0" ColumnDefinitions="420,*" ColumnSpacing="12" RowDefinitions="Auto,Auto,*">
+                    <TextBlock x:Name="FindingsHeaderTextBlock" Grid.ColumnSpan="2" FontWeight="SemiBold" Text="Risk Review" />
+                    <Button x:Name="ReloadFindingsButton" Grid.Row="1" Width="130" Content="Reload Findings" Click="ReloadFindings_Click" />
+
+                    <ListBox x:Name="FindingsListBox" Grid.Row="2">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="{Binding KindLabel}" FontSize="11" FontWeight="Bold" Opacity="0.7" />
+                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding Subtitle}" FontSize="12" Opacity="0.8" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <ScrollViewer Grid.Row="2" Grid.Column="1">
+                        <StackPanel Spacing="8">
+                            <TextBlock x:Name="FindingSummaryLabelTextBlock" FontWeight="SemiBold" Text="Summary" />
+                            <TextBlock x:Name="FindingSummaryTextBlock" TextWrapping="Wrap" />
+
+                            <TextBlock x:Name="FindingDescriptionLabelTextBlock" FontWeight="SemiBold" Text="Description" />
+                            <TextBlock x:Name="FindingDescriptionTextBlock" TextWrapping="Wrap" />
+
+                            <TextBlock x:Name="FindingProvenanceLabelTextBlock" FontWeight="SemiBold" Text="Source Provenance" />
+                            <TextBlock x:Name="FindingProvenanceTextBlock" TextWrapping="Wrap" />
+
+                            <TextBlock x:Name="FindingGuidanceLabelTextBlock" FontWeight="SemiBold" Text="Guidance" />
+                            <TextBlock x:Name="FindingGuidanceTextBlock" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="ModelsTabItem" Header="Scan Method">
+                <Grid Margin="0,8,0,0" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="*" RowSpacing="8">
+                    <TextBlock x:Name="ModelsHeaderTextBlock" FontWeight="SemiBold" Text="Scan Skill Methods" />
+
+                    <Border Grid.Row="1" BorderThickness="1" Padding="10">
+                        <WrapPanel Orientation="Horizontal">
+                            <CheckBox x:Name="EnableRegexScanCheckBox" Content="Regex" IsChecked="True" Margin="0,0,16,0" />
+                            <CheckBox x:Name="EnableMaliciousWordsScanCheckBox" Content="Malicious word group list" IsChecked="True" Margin="0,0,16,0" />
+                            <CheckBox x:Name="EnableInvisibleCharsScanCheckBox" Content="Invisible character detection" IsChecked="True" Margin="0,0,16,0" />
+                            <CheckBox x:Name="EnableLlmIntentScanCheckBox" Content="LLM Intent Recognition" IsChecked="True" Margin="0,0,16,0" />
+                        </WrapPanel>
+                    </Border>
+
+                    <TextBlock Grid.Row="2" x:Name="ScriptMethodsHeaderTextBlock" FontWeight="SemiBold" Text="Scan Script Methods" />
+
+                    <Border Grid.Row="3" BorderThickness="1" Padding="10">
+                        <WrapPanel Orientation="Horizontal">
+                            <CheckBox x:Name="EnableYaraScanCheckBox" Content="YARA" IsChecked="True" Margin="0,0,16,0" />
+                        </WrapPanel>
+                    </Border>
+
+                    <TextBlock Grid.Row="4" x:Name="ModelManagementHeaderTextBlock" FontWeight="SemiBold" Text="Model Management" Margin="0,8,0,0" />
+
+                    <Border Grid.Row="5" BorderThickness="1" Padding="10">
+                        <StackPanel Spacing="8">
+                            <TextBlock x:Name="GuardModelTitleTextBlock" FontWeight="SemiBold" Text="Guard Model (Llama Guard 3)" />
+                            <TextBlock Text="Model Name" FontWeight="SemiBold" />
+                            <TextBox x:Name="GuardModelNameTextBox" Width="780" Watermark="HuggingFace model name (e.g. Llama-Guard-3-8B-Q4_K_M-GGUF)" />
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBox x:Name="GuardModelPathTextBox" Width="780" Watermark="Path to guard GGUF model" />
+                                <Button x:Name="BrowseGuardModelButton" Width="90" Content="Browse" Click="BrowseGuardModel_Click" />
+                                <Button x:Name="DownloadGuardModelButton" Width="110" Content="Download" Click="DownloadGuardModel_Click" />
+                            </StackPanel>
+                            <ProgressBar x:Name="GuardDownloadProgressBar" Minimum="0" Maximum="100" Height="14" IsVisible="False" />
+                            <TextBlock x:Name="GuardModelStatusTextBlock" Text="Status: not configured" />
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel Grid.Row="6" Orientation="Horizontal" Spacing="8">
+                        <Button x:Name="SaveModelsButton" Content="Save Models" Width="130" Click="SaveModels_Click" />
+                        <Button x:Name="RefreshModelsButton" Content="Refresh Models" Width="140" Click="RefreshModels_Click" />
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="7" x:Name="ModelsBuiltWithLlamaTextBlock" Text="Built with Llama" Opacity="0.85" />
+                    <TextBlock Grid.Row="8" x:Name="ModelsLlamaLinkTextBlock" Text="https://llama.meta.com" Opacity="0.7" />
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="ScanOptionsTabItem" Header="Scan Options">
+                <Grid Margin="0,8,0,0" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="10">
+                    <TextBlock x:Name="ScanOptionsHeaderTextBlock"
+                               FontWeight="SemiBold"
+                               Text="Scan Options" />
+                    <TextBlock x:Name="ScanOptionsDescriptionTextBlock"
+                               Grid.Row="1"
+                               TextWrapping="Wrap"
+                               Text="Enable Windows Explorer context-menu entries for scanning files or directories with Philche." />
+                    <StackPanel Grid.Row="2" Spacing="10">
+                        <CheckBox x:Name="ScanFileContextMenuCheckBox"
+                                  Content="Add Scan file context menu"
+                                  IsCheckedChanged="ScanFileContextMenuCheckBox_Changed" />
+                        <CheckBox x:Name="ScanDirectoryContextMenuCheckBox"
+                                  Content="Add Scan directory context menu"
+                                  IsCheckedChanged="ScanDirectoryContextMenuCheckBox_Changed" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <TextBlock Grid.Row="2" x:Name="StatusTextBlock" />
+    </Grid>
+</Window>
