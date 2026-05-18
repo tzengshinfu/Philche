@@ -449,6 +449,8 @@ public partial class App : Application
         if (!scanningConfig.EnableYaraScan &&
             !llmIntentEnabled &&
             !rulesStageEnabled &&
+            !scanningConfig.EnableVirusTotalSkillUrlScan &&
+            !scanningConfig.EnableVirusTotalScriptUrlScan &&
             !scanningConfig.EnableRegexScan &&
             !scanningConfig.EnableCveCorrelation)
         {

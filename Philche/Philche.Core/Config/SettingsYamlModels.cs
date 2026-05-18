@@ -82,6 +82,9 @@ internal sealed class SettingsYamlScanning
     [YamlMember(Alias = "codeFileExtensions")]
     public List<string>? CodeFileExtensions { get; init; }
 
+    [YamlMember(Alias = "virusTotalApiKey")]
+    public string? VirusTotalApiKey { get; init; }
+
     [YamlMember(Alias = "enableYaraScan")]
     public bool? EnableYaraScan { get; init; }
 
@@ -99,6 +102,12 @@ internal sealed class SettingsYamlScanning
 
     [YamlMember(Alias = "enableRegexScan")]
     public bool? EnableRegexScan { get; init; }
+
+    [YamlMember(Alias = "enableVirusTotalSkillUrlScan")]
+    public bool? EnableVirusTotalSkillUrlScan { get; init; }
+
+    [YamlMember(Alias = "enableVirusTotalScriptUrlScan")]
+    public bool? EnableVirusTotalScriptUrlScan { get; init; }
 
     [YamlMember(Alias = "enableCveCorrelation")]
     public bool? EnableCveCorrelation { get; init; }

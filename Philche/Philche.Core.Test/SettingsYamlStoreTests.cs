@@ -150,24 +150,56 @@ public sealed class SettingsYamlStoreTests
             store.SaveScanningConfig(new ScanningConfig
             {
                 CodeFileExtensions = [".cs", ".py"],
+                VirusTotalApiKey = "vt-key",
                 EnableYaraScan = false,
                 EnableGuardModelScan = true,
                 EnableMaliciousWordGroupList = false,
                 EnableInvisibleCharacterDetection = false,
                 EnableLlmIntentRecognition = true,
                 EnableRegexScan = false,
+                EnableVirusTotalSkillUrlScan = true,
+                EnableVirusTotalScriptUrlScan = true,
                 EnableCveCorrelation = true,
             });
 
             var loaded = store.LoadScanningConfig();
             Assert.Equal(2, loaded.CodeFileExtensions.Count);
+            Assert.Equal("vt-key", loaded.VirusTotalApiKey);
             Assert.False(loaded.EnableYaraScan);
             Assert.True(loaded.EnableGuardModelScan);
             Assert.False(loaded.EnableMaliciousWordGroupList);
             Assert.False(loaded.EnableInvisibleCharacterDetection);
             Assert.True(loaded.EnableLlmIntentRecognition);
             Assert.False(loaded.EnableRegexScan);
+            Assert.True(loaded.EnableVirusTotalSkillUrlScan);
+            Assert.True(loaded.EnableVirusTotalScriptUrlScan);
             Assert.True(loaded.EnableCveCorrelation);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public void LoadScanningConfig_UsesVirusTotalDefaultsWhenMissing()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+
+        try
+        {
+            var store = new SettingsYamlStore(settingsPath);
+
+            var loaded = store.LoadScanningConfig();
+
+            Assert.Equal(string.Empty, loaded.VirusTotalApiKey);
+            Assert.False(loaded.EnableVirusTotalSkillUrlScan);
+            Assert.False(loaded.EnableVirusTotalScriptUrlScan);
         }
         finally
         {

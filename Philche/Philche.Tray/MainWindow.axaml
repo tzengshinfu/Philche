@@ -176,6 +176,7 @@
                             <CheckBox x:Name="EnableMaliciousWordsScanCheckBox" Content="Malicious word group list" IsChecked="True" Margin="0,0,16,0" />
                             <CheckBox x:Name="EnableInvisibleCharsScanCheckBox" Content="Invisible character detection" IsChecked="True" Margin="0,0,16,0" />
                             <CheckBox x:Name="EnableLlmIntentScanCheckBox" Content="LLM Intent Recognition" IsChecked="True" Margin="0,0,16,0" />
+                            <CheckBox x:Name="EnableVirusTotalSkillUrlScanCheckBox" Content="URL" IsChecked="False" Margin="0,0,16,0" />
                         </WrapPanel>
                     </Border>
 
@@ -184,6 +185,7 @@
                     <Border Grid.Row="3" BorderThickness="1" Padding="10">
                         <WrapPanel Orientation="Horizontal">
                             <CheckBox x:Name="EnableYaraScanCheckBox" Content="YARA" IsChecked="True" Margin="0,0,16,0" />
+                            <CheckBox x:Name="EnableVirusTotalScriptUrlScanCheckBox" Content="URL" IsChecked="False" Margin="0,0,16,0" />
                         </WrapPanel>
                     </Border>
 
@@ -215,7 +217,7 @@
             </TabItem>
 
             <TabItem x:Name="ScanOptionsTabItem" Header="Scan Options">
-                <Grid Margin="0,8,0,0" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="10">
+                <Grid Margin="0,8,0,0" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" RowSpacing="10">
                     <TextBlock x:Name="ScanOptionsHeaderTextBlock"
                                FontWeight="SemiBold"
                                Text="Scan Options" />
@@ -231,6 +233,15 @@
                                   Content="Add Scan directory context menu"
                                   IsCheckedChanged="ScanDirectoryContextMenuCheckBox_Changed" />
                     </StackPanel>
+                    <TextBlock x:Name="VirusTotalApiKeyLabelTextBlock"
+                               Grid.Row="3"
+                               Text="VirusTotal API Key"
+                               FontWeight="SemiBold"
+                               Margin="0,8,0,0" />
+                    <TextBox x:Name="VirusTotalApiKeyTextBox"
+                             Grid.Row="4"
+                             Width="520"
+                             Watermark="VT_API_KEY" />
                 </Grid>
             </TabItem>
         </TabControl>

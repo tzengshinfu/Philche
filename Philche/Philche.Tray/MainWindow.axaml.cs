@@ -78,6 +78,9 @@ public partial class MainWindow : Window
         EnableLlmIntentScanCheckBox.IsCheckedChanged += EditorToggleChanged;
         EnableYaraScanCheckBox.IsCheckedChanged += EditorToggleChanged;
         EnableRegexScanCheckBox.IsCheckedChanged += EditorToggleChanged;
+        EnableVirusTotalSkillUrlScanCheckBox.IsCheckedChanged += EditorToggleChanged;
+        EnableVirusTotalScriptUrlScanCheckBox.IsCheckedChanged += EditorToggleChanged;
+        VirusTotalApiKeyTextBox.TextChanged += EditorTextChanged;
 
         Opened += async (_, _) =>
         {
@@ -423,6 +426,7 @@ public partial class MainWindow : Window
         ScanOptionsDescriptionTextBlock.Text = localizer.Get("scanOptions.description");
         ScanFileContextMenuCheckBox.Content = localizer.Get("scanOptions.fileContextMenu");
         ScanDirectoryContextMenuCheckBox.Content = localizer.Get("scanOptions.dirContextMenu");
+        VirusTotalApiKeyLabelTextBlock.Text = "VirusTotal API Key";
     }
 
     private async Task ReloadFromYamlAsync()
@@ -814,6 +818,9 @@ public partial class MainWindow : Window
         EnableInvisibleCharsScanCheckBox.IsChecked = scanning.EnableInvisibleCharacterDetection;
         EnableLlmIntentScanCheckBox.IsChecked = scanning.EnableLlmIntentRecognition;
         EnableRegexScanCheckBox.IsChecked = scanning.EnableRegexScan;
+        EnableVirusTotalSkillUrlScanCheckBox.IsChecked = scanning.EnableVirusTotalSkillUrlScan;
+        EnableVirusTotalScriptUrlScanCheckBox.IsChecked = scanning.EnableVirusTotalScriptUrlScan;
+        VirusTotalApiKeyTextBox.Text = scanning.VirusTotalApiKey;
         suppressDirtyTracking = false;
     }
 
@@ -829,6 +836,9 @@ public partial class MainWindow : Window
             EnableInvisibleCharacterDetection = EnableInvisibleCharsScanCheckBox.IsChecked ?? true,
             EnableLlmIntentRecognition = EnableLlmIntentScanCheckBox.IsChecked ?? true,
             EnableRegexScan = EnableRegexScanCheckBox.IsChecked ?? true,
+            EnableVirusTotalSkillUrlScan = EnableVirusTotalSkillUrlScanCheckBox.IsChecked ?? false,
+            EnableVirusTotalScriptUrlScan = EnableVirusTotalScriptUrlScanCheckBox.IsChecked ?? false,
+            VirusTotalApiKey = VirusTotalApiKeyTextBox.Text?.Trim() ?? string.Empty,
         };
     }
 
@@ -881,8 +891,15 @@ public partial class MainWindow : Window
         try
         {
             var config = settingsYamlStore.LoadShellContextMenuConfig();
+            var scanning = settingsYamlStore.LoadScanningConfig();
             ScanFileContextMenuCheckBox.IsChecked = config.FileContextMenuEnabled && WindowsShellContextMenu.IsFileContextMenuRegistered(GetShellContextMenuExtensions());
             ScanDirectoryContextMenuCheckBox.IsChecked = config.DirectoryContextMenuEnabled && WindowsShellContextMenu.IsDirectoryContextMenuRegistered();
+            VirusTotalApiKeyTextBox.Text = scanning.VirusTotalApiKey;
+
+            if ((scanning.EnableVirusTotalSkillUrlScan || scanning.EnableVirusTotalScriptUrlScan) && string.IsNullOrWhiteSpace(scanning.VirusTotalApiKey))
+            {
+                StatusTextBlock.Text = "VT_API_KEY is empty. Please register or get an API key at https://docs.virustotal.com/docs/please-give-me-an-api-key and then fill in VT_API_KEY.";
+            }
         }
         finally
         {

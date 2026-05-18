@@ -250,7 +250,76 @@ public sealed class SkillRiskEvaluatorTests
             true));
 
         Assert.NotEmpty(result.Evidence);
-        Assert.All(result.Evidence, x => Assert.Equal("yara", x.Detector));
+        Assert.Contains(result.Evidence, x => x.Detector == "yara");
+    }
+
+    [Fact]
+    public async Task EvaluateAsync_AddsVirusTotalEvidence_ForScriptUrls()
+    {
+        var evaluator = new SkillRiskEvaluator(
+            new RuleDetector(),
+            new FakeSemanticDetector(0.0),
+            new FakeGuardClassifier(0.0),
+            new NonBlockingRiskActionPolicy(),
+            new RuntimeFeatureFlags { EnableVirusTotalScriptUrlScan = true },
+            new PromptPreprocessor(),
+            new YaraCodeScanner(),
+            new FakeVirusTotalUrlScanner(new VirusTotalUrlScanResult("https://evil.test", 0.9, 5, 1, "malicious")),
+            "vt-key");
+
+        var result = await evaluator.EvaluateAsync(new SkillEvaluationInput(
+            "Invoke-WebRequest https://evil.test",
+            "script.ps1",
+            true));
+
+        Assert.Contains(result.Evidence, x => x.Detector == "virustotal-url" && x.Score > 0.8);
+        Assert.Equal(RiskLevel.High, result.RiskLevel);
+    }
+
+    [Fact]
+    public async Task EvaluateAsync_AddsVirusTotalEvidence_ForSkillUrls()
+    {
+        var evaluator = new SkillRiskEvaluator(
+            new RuleDetector(),
+            new FakeSemanticDetector(0.0),
+            new FakeGuardClassifier(0.0),
+            new NonBlockingRiskActionPolicy(),
+            new RuntimeFeatureFlags { EnableVirusTotalSkillUrlScan = true },
+            new PromptPreprocessor(),
+            null,
+            new FakeVirusTotalUrlScanner(new VirusTotalUrlScanResult("https://evil.test", 0.9, 5, 1, "malicious")),
+            "vt-key");
+
+        var result = await evaluator.EvaluateAsync(new SkillEvaluationInput(
+            "see https://evil.test for details",
+            "skill.md",
+            false));
+
+        Assert.Contains(result.Evidence, x => x.Detector == "virustotal-url" && x.Score > 0.8);
+        Assert.Equal(RiskLevel.High, result.RiskLevel);
+    }
+
+    [Fact]
+    public async Task EvaluateAsync_ReportsVirusTotalApiKeyIssue_WhenEnabledWithoutKey()
+    {
+        var evaluator = new SkillRiskEvaluator(
+            new RuleDetector(),
+            new FakeSemanticDetector(0.0),
+            new FakeGuardClassifier(0.0),
+            new NonBlockingRiskActionPolicy(),
+            new RuntimeFeatureFlags { EnableVirusTotalSkillUrlScan = true },
+            new PromptPreprocessor(),
+            null,
+            new VirusTotalUrlScanner(new HttpClient(new StubHttpMessageHandler())),
+            string.Empty);
+
+        var result = await evaluator.EvaluateAsync(new SkillEvaluationInput(
+            "see https://evil.test for details",
+            "skill.md",
+            false));
+
+        Assert.True(result.IsDegradedMode);
+        Assert.Contains(result.Evidence, x => x.Detector == "virustotal-url" && x.Message.Contains("please-give-me-an-api-key", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -313,5 +382,17 @@ public sealed class SkillRiskEvaluatorTests
     private sealed class ThrowingGuardClassifier : IGuardModelClassifier
     {
         public Task<double> ScoreAsync(SkillEvaluationInput input, CancellationToken cancellationToken = default) => throw new InvalidOperationException("offline");
+    }
+
+    private sealed class FakeVirusTotalUrlScanner(params VirusTotalUrlScanResult[] results) : VirusTotalUrlScanner(new HttpClient(new StubHttpMessageHandler()))
+    {
+        public override Task<IReadOnlyList<VirusTotalUrlScanResult>> ScanAsync(IEnumerable<string> urls, string apiKey, CancellationToken cancellationToken = default)
+            => Task.FromResult<IReadOnlyList<VirusTotalUrlScanResult>>(results);
+    }
+
+    private sealed class StubHttpMessageHandler : HttpMessageHandler
+    {
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            => Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK));
     }
 }

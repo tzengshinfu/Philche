@@ -17,6 +17,8 @@ public sealed class SkillRiskEvaluator
     private readonly RuntimeFeatureFlags featureFlags;
     private readonly PromptPreprocessor promptPreprocessor;
     private readonly YaraCodeScanner? yaraCodeScanner;
+    private readonly VirusTotalUrlScanner? virusTotalUrlScanner;
+    private readonly string virusTotalApiKey;
 
     public SkillRiskEvaluator(
         RuleDetector ruleDetector,
@@ -25,7 +27,9 @@ public sealed class SkillRiskEvaluator
         NonBlockingRiskActionPolicy actionPolicy,
         RuntimeFeatureFlags? featureFlags = null,
         PromptPreprocessor? promptPreprocessor = null,
-        YaraCodeScanner? yaraCodeScanner = null)
+        YaraCodeScanner? yaraCodeScanner = null,
+        VirusTotalUrlScanner? virusTotalUrlScanner = null,
+        string? virusTotalApiKey = null)
     {
         this.ruleDetector = ruleDetector;
         this.semanticDetector = semanticDetector;
@@ -34,25 +38,69 @@ public sealed class SkillRiskEvaluator
         this.featureFlags = featureFlags ?? new RuntimeFeatureFlags();
         this.promptPreprocessor = promptPreprocessor ?? new PromptPreprocessor();
         this.yaraCodeScanner = yaraCodeScanner;
+        this.virusTotalUrlScanner = virusTotalUrlScanner;
+        this.virusTotalApiKey = virusTotalApiKey ?? string.Empty;
     }
 
     public async Task<SkillRiskResult> EvaluateAsync(SkillEvaluationInput input, CancellationToken cancellationToken = default)
     {
         var evidence = new List<SkillRiskEvidence>();
         var degradedMode = false;
+        var urlScore = 0d;
+
+        if (ShouldScanUrls(input))
+        {
+            if (virusTotalUrlScanner is null)
+            {
+                evidence.Add(new SkillRiskEvidence("virustotal-url", 0, "Detector unavailable"));
+            }
+            else
+            {
+                var urls = VirusTotalUrlScanner.ExtractUrls(input.Content);
+                if (urls.Count == 0)
+                {
+                    evidence.Add(new SkillRiskEvidence("virustotal-url", 0, "No URLs detected"));
+                }
+                else
+                {
+                    try
+                    {
+                        var urlResults = await virusTotalUrlScanner.ScanAsync(urls, virusTotalApiKey, cancellationToken);
+                        urlScore = urlResults.Count == 0 ? 0 : urlResults.Max(static result => result.Score);
+
+                        foreach (var urlResult in urlResults)
+                        {
+                            evidence.Add(new SkillRiskEvidence(
+                                "virustotal-url",
+                                urlResult.Score,
+                                $"{urlResult.Url} => {urlResult.Verdict} (malicious={urlResult.MaliciousCount}, suspicious={urlResult.SuspiciousCount})"));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        degradedMode = true;
+                        evidence.Add(new SkillRiskEvidence("virustotal-url", 0, ex.Message));
+                    }
+                }
+            }
+        }
+        else
+        {
+            evidence.Add(new SkillRiskEvidence("virustotal-url", 0, "Detector disabled by feature flag"));
+        }
 
         if (input.IsCode)
         {
             if (!featureFlags.EnableYaraCodeScanning)
             {
                 evidence.Add(new SkillRiskEvidence("yara", 0, "Detector disabled by feature flag"));
-                return new SkillRiskResult(RiskLevel.Low, false, false, evidence);
+                return BuildCodeResult(evidence, degradedMode, urlScore);
             }
 
             if (yaraCodeScanner is null)
             {
                 evidence.Add(new SkillRiskEvidence("yara", 0, "Detector unavailable"));
-                return new SkillRiskResult(RiskLevel.Low, true, false, evidence);
+                return BuildCodeResult(evidence, true, urlScore);
             }
 
             var yaraEvidence = yaraCodeScanner.Scan(input.Content);
@@ -66,7 +114,7 @@ public sealed class SkillRiskEvaluator
                 _ => RiskLevel.Low,
             };
 
-            return new SkillRiskResult(codeLevel, false, actionPolicy.ShouldBlock(codeLevel), evidence);
+            return BuildCodeResult(evidence, degradedMode, urlScore, codeLevel);
         }
 
         var rulesStageEnabled = featureFlags.EnableMaliciousWordGroupRiskStage || featureFlags.EnableInvisibleCharacterDetectionStage;
@@ -144,9 +192,9 @@ public sealed class SkillRiskEvaluator
             }
         }
 
-        var combinedScore = (rulesAndCharsScore * 0.35) + (regexScore * 0.2) + (semanticScore * 0.25) + (guardScore * 0.2);
+        var combinedScore = (rulesAndCharsScore * 0.3) + (regexScore * 0.15) + (semanticScore * 0.2) + (guardScore * 0.15) + (urlScore * 0.2);
 
-        var hasHighSignal = rulesAndCharsScore >= 0.45 || regexScore >= 0.45 || semanticScore >= 0.85 || guardScore >= 0.85;
+        var hasHighSignal = rulesAndCharsScore >= 0.45 || regexScore >= 0.45 || semanticScore >= 0.85 || guardScore >= 0.85 || urlScore >= 0.75;
         var level = hasHighSignal
             ? RiskLevel.High
             : combinedScore switch
@@ -154,6 +202,28 @@ public sealed class SkillRiskEvaluator
                 >= 0.40 => RiskLevel.Medium,
                 _ => RiskLevel.Low,
             };
+
+        return new SkillRiskResult(level, degradedMode, actionPolicy.ShouldBlock(level), evidence);
+    }
+
+    private bool ShouldScanUrls(SkillEvaluationInput input)
+    {
+        return input.IsCode
+            ? featureFlags.EnableVirusTotalScriptUrlScan
+            : featureFlags.EnableVirusTotalSkillUrlScan;
+    }
+
+    private SkillRiskResult BuildCodeResult(List<SkillRiskEvidence> evidence, bool degradedMode, double urlScore, RiskLevel? yaraLevel = null)
+    {
+        var level = yaraLevel ?? RiskLevel.Low;
+        if (urlScore >= 0.75)
+        {
+            level = RiskLevel.High;
+        }
+        else if (level == RiskLevel.Low && urlScore >= 0.35)
+        {
+            level = RiskLevel.Medium;
+        }
 
         return new SkillRiskResult(level, degradedMode, actionPolicy.ShouldBlock(level), evidence);
     }

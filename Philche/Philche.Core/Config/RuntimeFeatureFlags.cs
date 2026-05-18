@@ -9,6 +9,8 @@ public sealed record RuntimeFeatureFlags
     public bool EnableInvisibleCharacterDetectionStage { get; init; } = true;
     public bool EnableRegexRiskStage { get; init; } = true;
     public bool EnableYaraCodeScanning { get; init; } = true;
+    public bool EnableVirusTotalSkillUrlScan { get; init; } = false;
+    public bool EnableVirusTotalScriptUrlScan { get; init; } = false;
     public bool EnableJiebaPosFiltering { get; init; } = true;
     public bool EnableAutomaticKnownAgentCatalogRefresh { get; init; } = false;
 }

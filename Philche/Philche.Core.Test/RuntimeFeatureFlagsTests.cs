@@ -32,5 +32,7 @@ public sealed class RuntimeFeatureFlagsTests
         Assert.True(flags.EnableInvisibleCharacterDetectionStage);
         Assert.True(flags.EnableRegexRiskStage);
         Assert.True(flags.EnableYaraCodeScanning);
+        Assert.False(flags.EnableVirusTotalSkillUrlScan);
+        Assert.False(flags.EnableVirusTotalScriptUrlScan);
     }
 }

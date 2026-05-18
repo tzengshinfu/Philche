@@ -62,12 +62,15 @@ public sealed class SettingsYamlStore : ISettingsYamlStore
         return new ScanningConfig
         {
             CodeFileExtensions = document.Scanning?.CodeFileExtensions?.Where(e => !string.IsNullOrWhiteSpace(e)).ToList() ?? [],
+            VirusTotalApiKey = document.Scanning?.VirusTotalApiKey?.Trim() ?? string.Empty,
             EnableYaraScan = document.Scanning?.EnableYaraScan ?? true,
             EnableGuardModelScan = document.Scanning?.EnableLlmIntentRecognition ?? document.Scanning?.EnableGuardModelScan ?? true,
             EnableMaliciousWordGroupList = document.Scanning?.EnableMaliciousWordGroupList ?? true,
             EnableInvisibleCharacterDetection = document.Scanning?.EnableInvisibleCharacterDetection ?? true,
             EnableLlmIntentRecognition = document.Scanning?.EnableLlmIntentRecognition ?? document.Scanning?.EnableGuardModelScan ?? true,
             EnableRegexScan = document.Scanning?.EnableRegexScan ?? true,
+            EnableVirusTotalSkillUrlScan = document.Scanning?.EnableVirusTotalSkillUrlScan ?? false,
+            EnableVirusTotalScriptUrlScan = document.Scanning?.EnableVirusTotalScriptUrlScan ?? false,
             EnableCveCorrelation = document.Scanning?.EnableCveCorrelation ?? true,
         };
     }
@@ -168,12 +171,15 @@ public sealed class SettingsYamlStore : ISettingsYamlStore
             Scanning = new SettingsYamlScanning
             {
                 CodeFileExtensions = scanningConfig.CodeFileExtensions,
+                VirusTotalApiKey = string.IsNullOrWhiteSpace(scanningConfig.VirusTotalApiKey) ? null : scanningConfig.VirusTotalApiKey,
                 EnableYaraScan = scanningConfig.EnableYaraScan,
                 EnableGuardModelScan = scanningConfig.EnableLlmIntentRecognition,
                 EnableMaliciousWordGroupList = scanningConfig.EnableMaliciousWordGroupList,
                 EnableInvisibleCharacterDetection = scanningConfig.EnableInvisibleCharacterDetection,
                 EnableLlmIntentRecognition = scanningConfig.EnableLlmIntentRecognition,
                 EnableRegexScan = scanningConfig.EnableRegexScan,
+                EnableVirusTotalSkillUrlScan = scanningConfig.EnableVirusTotalSkillUrlScan,
+                EnableVirusTotalScriptUrlScan = scanningConfig.EnableVirusTotalScriptUrlScan,
                 EnableCveCorrelation = scanningConfig.EnableCveCorrelation,
             },
         };

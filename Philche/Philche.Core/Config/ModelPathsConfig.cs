@@ -10,12 +10,15 @@ public sealed class ModelPathsConfig
 public sealed class ScanningConfig
 {
     public List<string> CodeFileExtensions { get; init; } = [];
+    public string VirusTotalApiKey { get; init; } = string.Empty;
     public bool EnableYaraScan { get; init; } = true;
     public bool EnableGuardModelScan { get; init; } = true;
     public bool EnableMaliciousWordGroupList { get; init; } = true;
     public bool EnableInvisibleCharacterDetection { get; init; } = true;
     public bool EnableLlmIntentRecognition { get; init; } = true;
     public bool EnableRegexScan { get; init; } = true;
+    public bool EnableVirusTotalSkillUrlScan { get; init; }
+    public bool EnableVirusTotalScriptUrlScan { get; init; }
     public bool EnableCveCorrelation { get; init; } = true;
 }
 

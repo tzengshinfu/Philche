@@ -25,6 +25,8 @@ public sealed class EvaluatorFactory
         if (!scanning.EnableYaraScan &&
             !llmIntentEnabled &&
             !rulesStageEnabled &&
+            !scanning.EnableVirusTotalSkillUrlScan &&
+            !scanning.EnableVirusTotalScriptUrlScan &&
             !scanning.EnableRegexScan &&
             !scanning.EnableCveCorrelation)
         {
@@ -47,6 +49,8 @@ public sealed class EvaluatorFactory
             EnableInvisibleCharacterDetectionStage = scanning.EnableInvisibleCharacterDetection,
             EnableRegexRiskStage = scanning.EnableRegexScan,
             EnableYaraCodeScanning = scanning.EnableYaraScan,
+            EnableVirusTotalSkillUrlScan = scanning.EnableVirusTotalSkillUrlScan,
+            EnableVirusTotalScriptUrlScan = scanning.EnableVirusTotalScriptUrlScan,
             EnableJiebaPosFiltering = false,
         };
 
@@ -60,7 +64,9 @@ public sealed class EvaluatorFactory
             new NonBlockingRiskActionPolicy(),
             flags,
             new PromptPreprocessor(),
-            new YaraCodeScanner());
+            new YaraCodeScanner(),
+            new VirusTotalUrlScanner(new HttpClient()),
+            scanning.VirusTotalApiKey);
 
         return new EvaluatorSnapshot(
             evaluator,

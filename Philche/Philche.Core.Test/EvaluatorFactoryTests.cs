@@ -115,6 +115,36 @@ public sealed class EvaluatorFactoryTests
     }
 
     [Fact]
+    public async Task Build_EnablesVirusTotalSkillUrlStage_WhenConfiguredOn()
+    {
+        var store = new FakeSettingsStore
+        {
+            Scanning = new ScanningConfig
+            {
+                EnableVirusTotalSkillUrlScan = true,
+                VirusTotalApiKey = "vt-key",
+                EnableRegexScan = false,
+                EnableGuardModelScan = false,
+                EnableLlmIntentRecognition = false,
+                EnableMaliciousWordGroupList = false,
+                EnableInvisibleCharacterDetection = false,
+                EnableYaraScan = false,
+                EnableCveCorrelation = false,
+            },
+        };
+
+        var factory = new EvaluatorFactory(store);
+        using var snapshot = factory.Build();
+
+        var result = await snapshot.Evaluator.EvaluateAsync(new SkillEvaluationInput(
+            "visit https://example.test",
+            "SKILL.md",
+            false));
+
+        Assert.Contains(result.Evidence, x => x.Detector == "virustotal-url");
+    }
+
+    [Fact]
     public void Build_LogsWarning_WhenAllScanMethodsDisabled()
     {
         var warnings = new List<string>();
@@ -127,6 +157,8 @@ public sealed class EvaluatorFactoryTests
                 EnableLlmIntentRecognition = false,
                 EnableMaliciousWordGroupList = false,
                 EnableInvisibleCharacterDetection = false,
+                EnableVirusTotalSkillUrlScan = false,
+                EnableVirusTotalScriptUrlScan = false,
                 EnableRegexScan = false,
                 EnableCveCorrelation = false,
             },
@@ -172,6 +204,8 @@ public sealed class EvaluatorFactoryTests
             EnableLlmIntentRecognition = false,
             EnableMaliciousWordGroupList = false,
             EnableInvisibleCharacterDetection = false,
+            EnableVirusTotalSkillUrlScan = false,
+            EnableVirusTotalScriptUrlScan = false,
             EnableRegexScan = false,
             EnableCveCorrelation = false,
         });

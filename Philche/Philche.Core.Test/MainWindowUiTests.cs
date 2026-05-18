@@ -48,6 +48,19 @@ public sealed class MainWindowUiTests
     }
 
     [AvaloniaFact]
+    public void MainWindow_ExposesVirusTotalControls()
+    {
+        var window = new MainWindow();
+
+        Assert.NotNull(window.EnableVirusTotalSkillUrlScanCheckBox);
+        Assert.NotNull(window.EnableVirusTotalScriptUrlScanCheckBox);
+        Assert.NotNull(window.VirusTotalApiKeyTextBox);
+        Assert.Equal("URL", window.EnableVirusTotalSkillUrlScanCheckBox.Content);
+        Assert.Equal("URL", window.EnableVirusTotalScriptUrlScanCheckBox.Content);
+        Assert.Equal("VT_API_KEY", window.VirusTotalApiKeyTextBox.Watermark);
+    }
+
+    [AvaloniaFact]
     public async Task LoadFindingsAsync_IncludesLatestCodeScanRiskPaths()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-mainwindow-{Guid.NewGuid():N}.db");
