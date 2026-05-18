@@ -9,7 +9,7 @@ namespace Philche.Core.SkillsRisk;
 public class VirusTotalUrlScanner(HttpClient httpClient)
 {
     private static readonly Regex UrlRegex = new(@"https?://[^\s)\]>\""']+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private const string MissingApiKeyMessage = "VirusTotal API key is required. Register or get one at https://docs.virustotal.com/docs/please-give-me-an-api-key and then fill in VT_API_KEY.";
+    private const string MissingApiKeyMessage = "VT_API_KEY is empty. Please register or get an API key at https://docs.virustotal.com/docs/please-give-me-an-api-key and then fill in VT_API_KEY.";
 
     public static IReadOnlyList<string> ExtractUrls(string content)
     {

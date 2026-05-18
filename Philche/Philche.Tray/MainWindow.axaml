@@ -241,7 +241,7 @@
                     <TextBox x:Name="VirusTotalApiKeyTextBox"
                              Grid.Row="4"
                              Width="520"
-                             Watermark="VT_API_KEY" />
+                             Watermark="Enter VT_API_KEY" />
                 </Grid>
             </TabItem>
         </TabControl>

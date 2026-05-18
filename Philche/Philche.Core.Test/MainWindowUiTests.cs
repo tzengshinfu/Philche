@@ -57,7 +57,10 @@ public sealed class MainWindowUiTests
         Assert.NotNull(window.VirusTotalApiKeyTextBox);
         Assert.Equal("URL", window.EnableVirusTotalSkillUrlScanCheckBox.Content);
         Assert.Equal("URL", window.EnableVirusTotalScriptUrlScanCheckBox.Content);
-        Assert.Equal("VT_API_KEY", window.VirusTotalApiKeyTextBox.Watermark);
+        var watermark = window.VirusTotalApiKeyTextBox.Watermark?.ToString();
+        Assert.True(
+            string.Equals(watermark, "請輸入 VT_API_KEY", StringComparison.Ordinal) ||
+            string.Equals(watermark, "Enter VT_API_KEY", StringComparison.Ordinal));
     }
 
     [AvaloniaFact]

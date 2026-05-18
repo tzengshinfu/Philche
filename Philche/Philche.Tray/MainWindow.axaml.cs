@@ -426,7 +426,8 @@ public partial class MainWindow : Window
         ScanOptionsDescriptionTextBlock.Text = localizer.Get("scanOptions.description");
         ScanFileContextMenuCheckBox.Content = localizer.Get("scanOptions.fileContextMenu");
         ScanDirectoryContextMenuCheckBox.Content = localizer.Get("scanOptions.dirContextMenu");
-        VirusTotalApiKeyLabelTextBlock.Text = "VirusTotal API Key";
+        VirusTotalApiKeyLabelTextBlock.Text = localizer.Get("scanOptions.virusTotalApiKey");
+        VirusTotalApiKeyTextBox.Watermark = localizer.Get("scanOptions.virusTotalApiKeyWatermark");
     }
 
     private async Task ReloadFromYamlAsync()
@@ -898,7 +899,7 @@ public partial class MainWindow : Window
 
             if ((scanning.EnableVirusTotalSkillUrlScan || scanning.EnableVirusTotalScriptUrlScan) && string.IsNullOrWhiteSpace(scanning.VirusTotalApiKey))
             {
-                StatusTextBlock.Text = "VT_API_KEY is empty. Please register or get an API key at https://docs.virustotal.com/docs/please-give-me-an-api-key and then fill in VT_API_KEY.";
+                StatusTextBlock.Text = localizer.Get("status.virusTotalApiKeyMissing");
             }
         }
         finally
