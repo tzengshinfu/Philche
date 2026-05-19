@@ -6,6 +6,24 @@ namespace Philche.Core.Test;
 public sealed class TrayIntegrationTests
 {
     [Fact]
+    public void IsCliMode_ReturnsTrue_WhenCliFlagPresent()
+    {
+        Assert.True(Program.IsCliMode(["philche.exe", "--cli", "--scan", @"C:\temp\a.py"]));
+    }
+
+    [Fact]
+    public void ExtractFormat_DefaultsToText_WhenFormatFlagMissing()
+    {
+        Assert.Equal("text", Program.ExtractFormat(["philche.exe", "--cli", "--scan", @"C:\temp\a.py"]));
+    }
+
+    [Fact]
+    public void ExtractFormat_ReturnsJson_WhenJsonFormatSpecified()
+    {
+        Assert.Equal("json", Program.ExtractFormat(["philche.exe", "--cli", "--scan", @"C:\temp\a.py", "--format", "json"]));
+    }
+
+    [Fact]
     public void ExtractScanPaths_ReturnsDistinctTrimmedPathsAfterScanFlag()
     {
         var paths = Program.ExtractScanPaths(
@@ -91,5 +109,64 @@ public sealed class TrayIntegrationTests
         {
             ScanQueueIpc.DrainPaths();
         }
+    }
+
+    [Fact]
+    public void ResolveScannableFiles_ExpandsDirectories_AndIncludesMarkdownFiles()
+    {
+        var tempDir = CreateTempDirectory();
+
+        try
+        {
+            var nestedDir = Path.Combine(tempDir, "skills");
+            Directory.CreateDirectory(nestedDir);
+
+            var markdownFile = Path.Combine(nestedDir, "SKILL.md");
+            var codeFile = Path.Combine(nestedDir, "script.py");
+            var ignoredFile = Path.Combine(nestedDir, "image.png");
+
+            File.WriteAllText(markdownFile, "safe prompt content");
+            File.WriteAllText(codeFile, "print('hello')");
+            File.WriteAllText(ignoredFile, "not scannable");
+
+            var files = CliRunner.ResolveScannableFiles([tempDir], out var errors);
+
+            Assert.Empty(errors);
+            Assert.Equal(2, files.Count);
+            Assert.Contains(markdownFile, files);
+            Assert.Contains(codeFile, files);
+            Assert.DoesNotContain(ignoredFile, files);
+        }
+        finally
+        {
+            Directory.Delete(tempDir, true);
+        }
+    }
+
+    [Fact]
+    public async Task CliRunner_RunAsync_ScansCleanMarkdownFile_AndReturnsZero()
+    {
+        var tempDir = CreateTempDirectory();
+
+        try
+        {
+            var markdownFile = Path.Combine(tempDir, "SKILL.md");
+            File.WriteAllText(markdownFile, "Summarize this guide in one sentence.");
+
+            var exitCode = await CliRunner.RunAsync([markdownFile], "text");
+
+            Assert.Equal(0, exitCode);
+        }
+        finally
+        {
+            Directory.Delete(tempDir, true);
+        }
+    }
+
+    private static string CreateTempDirectory()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"philche-tray-tests-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(path);
+        return path;
     }
 }

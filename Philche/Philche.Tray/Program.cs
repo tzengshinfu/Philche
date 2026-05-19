@@ -8,6 +8,8 @@ namespace Philche.Tray;
 
 internal static class Program
 {
+    private const string CliArgument = "--cli";
+    private const string FormatArgument = "--format";
     private const string SingleInstanceMutexName = "Philche.Tray.Singleton";
     private const string OpenModelsProtocol = "philche-open-models";
     private const string OpenModelsSignalName = "Philche.Tray.OpenModels";
@@ -25,6 +27,15 @@ internal static class Program
     public static void Main(string[] args)
     {
         RegisterUnhandledExceptionHooks();
+
+        if (IsCliMode(args))
+        {
+            ConsoleHelper.EnsureConsole();
+            var exitCode = CliRunner.RunAsync(ExtractScanPaths(args), ExtractFormat(args)).GetAwaiter().GetResult();
+            Environment.Exit(exitCode);
+            return;
+        }
+
         RegisterOpenModelsProtocol();
         OpenModelsOnStartup = IsOpenModelsActivation(args);
         ScanPathsOnStartup = ExtractScanPaths(args);
@@ -165,6 +176,11 @@ internal static class Program
         return args.Any(arg => arg.StartsWith($"{OpenModelsProtocol}://open-models", StringComparison.OrdinalIgnoreCase));
     }
 
+    internal static bool IsCliMode(string[] args)
+    {
+        return args.Any(static arg => string.Equals(arg, CliArgument, StringComparison.OrdinalIgnoreCase));
+    }
+
     internal static IReadOnlyList<string> ExtractScanPaths(string[] args)
     {
         var flagIndex = Array.FindIndex(args, static arg => string.Equals(arg, ScanArgument, StringComparison.OrdinalIgnoreCase));
@@ -179,6 +195,20 @@ internal static class Program
             .Select(static arg => arg.Trim())
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
+    }
+
+    internal static string ExtractFormat(string[] args)
+    {
+        var flagIndex = Array.FindIndex(args, static arg => string.Equals(arg, FormatArgument, StringComparison.OrdinalIgnoreCase));
+        if (flagIndex < 0 || flagIndex >= args.Length - 1)
+        {
+            return "text";
+        }
+
+        var format = args[flagIndex + 1]?.Trim();
+        return string.Equals(format, "json", StringComparison.OrdinalIgnoreCase)
+            ? "json"
+            : "text";
     }
 
     private static void SignalOpenModels()
