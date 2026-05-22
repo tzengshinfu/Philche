@@ -181,6 +181,24 @@ shell:
   contextMenuEnabled: true
 ```
 
+惡意詞組清單會從與 `Settings.yaml` 同目錄的 `malicious-phrases.txt` 載入：
+
+- 每行一個詞組
+- `#` 開頭視為註解
+- 若檔案不存在，Philche 會自動建立一份預設清單，供後續直接編輯
+
+範例：
+
+```text
+# Prompt injection / jailbreak
+ignore previous
+jailbreak
+
+# Chinese
+忽略之前
+越獄
+```
+
 ---
 
 ## 開發者資訊 For Developers

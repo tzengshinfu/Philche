@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -22,5 +22,11 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Localization\Resources\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="SkillsRisk\malicious-phrases.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 using Philche.Core.SkillsRisk;
+using Philche.Core.Config;
 
 namespace Philche.Core.Test;
 
@@ -179,5 +180,61 @@ public sealed class RuleDetectorTests
         var score = detector.Score(input);
 
         Assert.True(score >= 0.3);
+    }
+
+    [Fact]
+    public void GetDefaultMaliciousPhraseFilePath_UsesSettingsYamlDirectory()
+    {
+        var settingsPath = new SettingsYamlStore().FilePath;
+        var expected = Path.Combine(Path.GetDirectoryName(settingsPath)!, "malicious-phrases.txt");
+
+        var actual = RuleDetector.GetDefaultMaliciousPhraseFilePath();
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void LoadMaliciousPhrases_IgnoresCommentsWhitespaceAndDuplicates()
+    {
+        var tempFile = Path.GetTempFileName();
+
+        try
+        {
+            File.WriteAllText(tempFile, "# comment\nignore previous\n\n  ignore previous  \n越獄\n", System.Text.Encoding.UTF8);
+
+            var phrases = RuleDetector.LoadMaliciousPhrases(tempFile);
+
+            Assert.Equal(2, phrases.Count);
+            Assert.Contains("ignore previous", phrases);
+            Assert.Contains("越獄", phrases);
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
+
+    [Fact]
+    public void LoadMaliciousPhrases_CreatesDefaultFile_WhenMissing()
+    {
+        var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        var tempFile = Path.Combine(tempDirectory, "malicious-phrases.txt");
+
+        try
+        {
+            var phrases = RuleDetector.LoadMaliciousPhrases(tempFile);
+
+            Assert.NotEmpty(phrases);
+            Assert.True(File.Exists(tempFile));
+            Assert.Contains("ignore previous", phrases);
+            Assert.Contains("越獄", phrases);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDirectory))
+            {
+                Directory.Delete(tempDirectory, recursive: true);
+            }
+        }
     }
 }

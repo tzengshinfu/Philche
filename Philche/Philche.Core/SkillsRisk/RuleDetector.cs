@@ -1,10 +1,13 @@
 using System.Text.RegularExpressions;
 using System.Text;
+using Philche.Core.Config;
 
 namespace Philche.Core.SkillsRisk;
 
 public sealed class RuleDetector
 {
+    private const string DefaultMaliciousPhraseFileName = "malicious-phrases.txt";
+
     private static readonly Regex DangerousPattern = new(
         "ignore\\s+previous|exfiltrate|credit\\s*card|password|api[_-]?key|base64",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -61,9 +64,8 @@ public sealed class RuleDetector
         "my", "your", "his", "their", "our", "do", "does", "did", "have", "has", "had",
     ];
 
-    private static readonly AhoCorasickMatcher MaliciousMatcher = new(
+    private static readonly string[] BuiltInMaliciousPhrases =
     [
-        // ── Prompt injection / jailbreak (English) ────────────────────────────
         "ignore previous",
         "ignore all instructions",
         "disregard previous",
@@ -81,8 +83,6 @@ public sealed class RuleDetector
         "system prompt",
         "jailbreak",
         "bypass",
-
-        // ── Data exfiltration / credential theft (English) ───────────────────
         "exfiltrate",
         "exfil",
         "steal",
@@ -95,8 +95,6 @@ public sealed class RuleDetector
         "shell execute",
         "remote code",
         "command injection",
-
-        // ── Sensitive data patterns (English) ─────────────────────────────────
         "password",
         "api key",
         "secret key",
@@ -112,8 +110,6 @@ public sealed class RuleDetector
         "cvv",
         "base64",
         "token",
-
-        // ── Prompt injection / jailbreak (Chinese) ────────────────────────────
         "忽略之前",
         "忽略先前",
         "忽略上述",
@@ -129,8 +125,6 @@ public sealed class RuleDetector
         "系統提示詞",
         "系統提示",
         "注入指令",
-
-        // ── Data exfiltration / credential theft (Chinese) ───────────────────
         "竊取資料",
         "洩漏資料",
         "外洩資料",
@@ -138,7 +132,164 @@ public sealed class RuleDetector
         "取得金鑰",
         "傳送密碼",
         "竊取",
-    ]);
+    ];
+
+    private readonly AhoCorasickMatcher maliciousMatcher;
+
+    public RuleDetector(string? maliciousPhraseFilePath = null)
+    {
+        maliciousMatcher = new AhoCorasickMatcher(LoadMaliciousPhrases(maliciousPhraseFilePath));
+    }
+
+    internal static string GetDefaultMaliciousPhraseFilePath()
+    {
+        var settingsFilePath = new SettingsYamlStore().FilePath;
+        var settingsDirectory = Path.GetDirectoryName(settingsFilePath);
+
+        if (string.IsNullOrWhiteSpace(settingsDirectory))
+        {
+            return Path.GetFullPath(DefaultMaliciousPhraseFileName);
+        }
+
+        return Path.Combine(settingsDirectory, DefaultMaliciousPhraseFileName);
+    }
+
+    internal static IReadOnlyList<string> LoadMaliciousPhrases(string? maliciousPhraseFilePath = null)
+    {
+        var path = ResolveMaliciousPhraseFilePath(maliciousPhraseFilePath);
+        if (!File.Exists(path))
+        {
+            EnsureDefaultMaliciousPhraseFileExists(path);
+
+            if (!File.Exists(path))
+            {
+                return BuiltInMaliciousPhrases;
+            }
+
+            return ParseMaliciousPhrases(path);
+        }
+
+        return ParseMaliciousPhrases(path);
+    }
+
+    private static IReadOnlyList<string> ParseMaliciousPhrases(string path)
+    {
+        return File
+            .ReadLines(path, Encoding.UTF8)
+            .Select(static line => line.Trim())
+            .Where(static line => !string.IsNullOrWhiteSpace(line) && !line.StartsWith('#'))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static void EnsureDefaultMaliciousPhraseFileExists(string path)
+    {
+        try
+        {
+            var directory = Path.GetDirectoryName(path);
+            if (!string.IsNullOrWhiteSpace(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            File.WriteAllLines(path, GetDefaultMaliciousPhraseFileLines(), Encoding.UTF8);
+        }
+        catch
+        {
+        }
+    }
+
+    private static IReadOnlyList<string> GetDefaultMaliciousPhraseFileLines()
+    {
+        return
+        [
+            "# Prompt injection / jailbreak (English)",
+            "ignore previous",
+            "ignore all instructions",
+            "disregard previous",
+            "disregard all",
+            "forget previous",
+            "override instructions",
+            "new instructions",
+            "do anything now",
+            "pretend you are",
+            "you are now free",
+            "suppress training",
+            "circumvent",
+            "new persona",
+            "act as if you have",
+            "system prompt",
+            "jailbreak",
+            "bypass",
+            string.Empty,
+            "# Data exfiltration / credential theft (English)",
+            "exfiltrate",
+            "exfil",
+            "steal",
+            "harvest credentials",
+            "dump",
+            "keylog",
+            "keystroke",
+            "clipboard",
+            "screen capture",
+            "shell execute",
+            "remote code",
+            "command injection",
+            string.Empty,
+            "# Sensitive data patterns (English)",
+            "password",
+            "api key",
+            "secret key",
+            "access token",
+            "auth token",
+            "bearer token",
+            "refresh token",
+            "credentials",
+            "session cookie",
+            "private key",
+            "credit card",
+            "cvc",
+            "cvv",
+            "base64",
+            "token",
+            string.Empty,
+            "# Prompt injection / jailbreak (Chinese)",
+            "忽略之前",
+            "忽略先前",
+            "忽略上述",
+            "忽略以上",
+            "忘記之前",
+            "忘記先前",
+            "新的指令",
+            "你現在是",
+            "不受限制",
+            "繞過安全",
+            "越獄",
+            "解除限制",
+            "系統提示詞",
+            "系統提示",
+            "注入指令",
+            string.Empty,
+            "# Data exfiltration / credential theft (Chinese)",
+            "竊取資料",
+            "洩漏資料",
+            "外洩資料",
+            "取得密碼",
+            "取得金鑰",
+            "傳送密碼",
+            "竊取",
+        ];
+    }
+
+    private static string ResolveMaliciousPhraseFilePath(string? maliciousPhraseFilePath)
+    {
+        if (!string.IsNullOrWhiteSpace(maliciousPhraseFilePath))
+        {
+            return Path.GetFullPath(maliciousPhraseFilePath);
+        }
+
+        return GetDefaultMaliciousPhraseFilePath();
+    }
 
     public double Score(SkillEvaluationInput input)
     {
@@ -187,7 +338,7 @@ public sealed class RuleDetector
 
         if (enableMaliciousWordGroupList)
         {
-            var maliciousHits = MaliciousMatcher.CountMatches(cleaned);
+            var maliciousHits = maliciousMatcher.CountMatches(cleaned);
             if (maliciousHits > 0)
             {
                 score += Math.Min(0.30, maliciousHits * 0.08);

@@ -1,0 +1,75 @@
+# Prompt injection / jailbreak (English)
+ignore previous
+ignore all instructions
+disregard previous
+disregard all
+forget previous
+override instructions
+new instructions
+do anything now
+pretend you are
+you are now free
+suppress training
+circumvent
+new persona
+act as if you have
+system prompt
+jailbreak
+bypass
+
+# Data exfiltration / credential theft (English)
+exfiltrate
+exfil
+steal
+harvest credentials
+dump
+keylog
+keystroke
+clipboard
+screen capture
+shell execute
+remote code
+command injection
+
+# Sensitive data patterns (English)
+password
+api key
+secret key
+access token
+auth token
+bearer token
+refresh token
+credentials
+session cookie
+private key
+credit card
+cvc
+cvv
+base64
+token
+
+# Prompt injection / jailbreak (Chinese)
+忽略之前
+忽略先前
+忽略上述
+忽略以上
+忘記之前
+忘記先前
+新的指令
+你現在是
+不受限制
+繞過安全
+越獄
+解除限制
+系統提示詞
+系統提示
+注入指令
+
+# Data exfiltration / credential theft (Chinese)
+竊取資料
+洩漏資料
+外洩資料
+取得密碼
+取得金鑰
+傳送密碼
+竊取
