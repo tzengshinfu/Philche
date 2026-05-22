@@ -1,0 +1,7 @@
+# Dangerous regex patterns for prompt scanning
+ignore\s+previous
+exfiltrate
+credit\s*card
+password
+api[_-]?key
+base64

@@ -199,6 +199,22 @@ jailbreak
 越獄
 ```
 
+危險樣式 Regex 規則會從與 `Settings.yaml` 同目錄的 `dangerous-patterns.txt` 載入：
+
+- 每行一條 Regex 規則
+- `#` 開頭視為註解
+- 若檔案不存在，Philche 會自動建立一份預設規則檔
+- 無效 Regex 會被忽略，不會讓整體掃描失敗
+
+範例：
+
+```text
+# Dangerous regex patterns
+ignore\s+previous
+api[_-]?key
+credit\s*card
+```
+
 ---
 
 ## 開發者資訊 For Developers

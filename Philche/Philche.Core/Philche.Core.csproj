@@ -28,5 +28,8 @@
     <Content Include="SkillsRisk\malicious-phrases.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="SkillsRisk\dangerous-patterns.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

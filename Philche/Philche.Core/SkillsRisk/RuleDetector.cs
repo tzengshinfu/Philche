@@ -7,10 +7,7 @@ namespace Philche.Core.SkillsRisk;
 public sealed class RuleDetector
 {
     private const string DefaultMaliciousPhraseFileName = "malicious-phrases.txt";
-
-    private static readonly Regex DangerousPattern = new(
-        "ignore\\s+previous|exfiltrate|credit\\s*card|password|api[_-]?key|base64",
-        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private const string DefaultDangerousPatternFileName = "dangerous-patterns.txt";
 
     private static readonly Regex UnicodeEscapePattern = new(
         "\\\\u[0-9a-fA-F]{4}|%u[0-9a-fA-F]{4}|&#x[0-9a-fA-F]+;",
@@ -134,11 +131,23 @@ public sealed class RuleDetector
         "竊取",
     ];
 
-    private readonly AhoCorasickMatcher maliciousMatcher;
+    private static readonly string[] BuiltInDangerousPatterns =
+    [
+        "ignore\\s+previous",
+        "exfiltrate",
+        "credit\\s*card",
+        "password",
+        "api[_-]?key",
+        "base64",
+    ];
 
-    public RuleDetector(string? maliciousPhraseFilePath = null)
+    private readonly AhoCorasickMatcher maliciousMatcher;
+    private readonly Regex[] dangerousPatterns;
+
+    public RuleDetector(string? maliciousPhraseFilePath = null, string? dangerousPatternFilePath = null)
     {
         maliciousMatcher = new AhoCorasickMatcher(LoadMaliciousPhrases(maliciousPhraseFilePath));
+        dangerousPatterns = LoadDangerousPatterns(dangerousPatternFilePath);
     }
 
     internal static string GetDefaultMaliciousPhraseFilePath()
@@ -172,6 +181,37 @@ public sealed class RuleDetector
         return ParseMaliciousPhrases(path);
     }
 
+    internal static string GetDefaultDangerousPatternFilePath()
+    {
+        var settingsFilePath = new SettingsYamlStore().FilePath;
+        var settingsDirectory = Path.GetDirectoryName(settingsFilePath);
+
+        if (string.IsNullOrWhiteSpace(settingsDirectory))
+        {
+            return Path.GetFullPath(DefaultDangerousPatternFileName);
+        }
+
+        return Path.Combine(settingsDirectory, DefaultDangerousPatternFileName);
+    }
+
+    internal static Regex[] LoadDangerousPatterns(string? dangerousPatternFilePath = null)
+    {
+        var path = ResolveDangerousPatternFilePath(dangerousPatternFilePath);
+        if (!File.Exists(path))
+        {
+            EnsureDefaultDangerousPatternFileExists(path);
+
+            if (!File.Exists(path))
+            {
+                return CompileRegexPatterns(BuiltInDangerousPatterns);
+            }
+
+            return ParseDangerousPatterns(path);
+        }
+
+        return ParseDangerousPatterns(path);
+    }
+
     private static IReadOnlyList<string> ParseMaliciousPhrases(string path)
     {
         return File
@@ -180,6 +220,36 @@ public sealed class RuleDetector
             .Where(static line => !string.IsNullOrWhiteSpace(line) && !line.StartsWith('#'))
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
+    }
+
+    private static Regex[] ParseDangerousPatterns(string path)
+    {
+        var patterns = File
+            .ReadLines(path, Encoding.UTF8)
+            .Select(static line => line.Trim())
+            .Where(static line => !string.IsNullOrWhiteSpace(line) && !line.StartsWith('#'))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        return CompileRegexPatterns(patterns);
+    }
+
+    private static Regex[] CompileRegexPatterns(IEnumerable<string> patterns)
+    {
+        var compiled = new List<Regex>();
+
+        foreach (var pattern in patterns)
+        {
+            try
+            {
+                compiled.Add(new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled));
+            }
+            catch (ArgumentException)
+            {
+            }
+        }
+
+        return [.. compiled];
     }
 
     private static void EnsureDefaultMaliciousPhraseFileExists(string path)
@@ -193,6 +263,33 @@ public sealed class RuleDetector
             }
 
             File.WriteAllLines(path, GetDefaultMaliciousPhraseFileLines(), Encoding.UTF8);
+        }
+        catch
+        {
+        }
+    }
+
+    private static string ResolveDangerousPatternFilePath(string? dangerousPatternFilePath)
+    {
+        if (!string.IsNullOrWhiteSpace(dangerousPatternFilePath))
+        {
+            return Path.GetFullPath(dangerousPatternFilePath);
+        }
+
+        return GetDefaultDangerousPatternFilePath();
+    }
+
+    private static void EnsureDefaultDangerousPatternFileExists(string path)
+    {
+        try
+        {
+            var directory = Path.GetDirectoryName(path);
+            if (!string.IsNullOrWhiteSpace(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            File.WriteAllLines(path, GetDefaultDangerousPatternFileLines(), Encoding.UTF8);
         }
         catch
         {
@@ -281,6 +378,20 @@ public sealed class RuleDetector
         ];
     }
 
+    private static IReadOnlyList<string> GetDefaultDangerousPatternFileLines()
+    {
+        return
+        [
+            "# Dangerous regex patterns for prompt scanning",
+            "ignore\\s+previous",
+            "exfiltrate",
+            "credit\\s*card",
+            "password",
+            "api[_-]?key",
+            "base64",
+        ];
+    }
+
     private static string ResolveMaliciousPhraseFilePath(string? maliciousPhraseFilePath)
     {
         if (!string.IsNullOrWhiteSpace(maliciousPhraseFilePath))
@@ -359,7 +470,7 @@ public sealed class RuleDetector
         var cleaned = Preprocess(content);
         var score = 0.0;
 
-        if (DangerousPattern.IsMatch(cleaned))
+        if (dangerousPatterns.Any(pattern => pattern.IsMatch(cleaned)))
         {
             score += 0.35;
         }
