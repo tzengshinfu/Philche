@@ -189,10 +189,24 @@ internal static class Program
             return [];
         }
 
-        return args
-            .Skip(flagIndex + 1)
-            .Where(static arg => !string.IsNullOrWhiteSpace(arg))
-            .Select(static arg => arg.Trim())
+        var paths = new List<string>();
+        for (var index = flagIndex + 1; index < args.Length; index++)
+        {
+            var arg = args[index]?.Trim();
+            if (string.IsNullOrWhiteSpace(arg))
+            {
+                continue;
+            }
+
+            if (arg.StartsWith("--", StringComparison.Ordinal))
+            {
+                break;
+            }
+
+            paths.Add(arg);
+        }
+
+        return paths
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
     }

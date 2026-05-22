@@ -41,6 +41,23 @@ public sealed class TrayIntegrationTests
     }
 
     [Fact]
+    public void ExtractScanPaths_StopsAtNextFlag()
+    {
+        var paths = Program.ExtractScanPaths(
+        [
+            "philche.exe",
+            "--cli",
+            "--scan",
+            @"\\wsl.localhost\Ubuntu-22.04\home\y1938\.openclaw\workspace\skills",
+            "--format",
+            "json",
+        ]);
+
+        Assert.Single(paths);
+        Assert.Equal(@"\\wsl.localhost\Ubuntu-22.04\home\y1938\.openclaw\workspace\skills", paths[0]);
+    }
+
+    [Fact]
     public void ExtractScanPaths_ReturnsEmpty_WhenScanFlagMissing()
     {
         var paths = Program.ExtractScanPaths(["philche.exe", @"C:\temp\a.py"]);
