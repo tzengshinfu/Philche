@@ -63,6 +63,7 @@ public sealed class SettingsYamlStore : ISettingsYamlStore
         {
             CodeFileExtensions = document.Scanning?.CodeFileExtensions?.Where(e => !string.IsNullOrWhiteSpace(e)).ToList() ?? [],
             VirusTotalApiKey = document.Scanning?.VirusTotalApiKey?.Trim() ?? string.Empty,
+            EnableSemanticScan = document.Scanning?.EnableSemanticScan ?? false,
             EnableYaraScan = document.Scanning?.EnableYaraScan ?? true,
             EnableGuardModelScan = document.Scanning?.EnableLlmIntentRecognition ?? document.Scanning?.EnableGuardModelScan ?? true,
             EnableMaliciousWordGroupList = document.Scanning?.EnableMaliciousWordGroupList ?? true,
@@ -172,6 +173,7 @@ public sealed class SettingsYamlStore : ISettingsYamlStore
             {
                 CodeFileExtensions = scanningConfig.CodeFileExtensions,
                 VirusTotalApiKey = string.IsNullOrWhiteSpace(scanningConfig.VirusTotalApiKey) ? null : scanningConfig.VirusTotalApiKey,
+                EnableSemanticScan = scanningConfig.EnableSemanticScan,
                 EnableYaraScan = scanningConfig.EnableYaraScan,
                 EnableGuardModelScan = scanningConfig.EnableLlmIntentRecognition,
                 EnableMaliciousWordGroupList = scanningConfig.EnableMaliciousWordGroupList,

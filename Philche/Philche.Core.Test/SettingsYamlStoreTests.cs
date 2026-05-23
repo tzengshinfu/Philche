@@ -151,6 +151,7 @@ public sealed class SettingsYamlStoreTests
             {
                 CodeFileExtensions = [".cs", ".py"],
                 VirusTotalApiKey = "vt-key",
+                EnableSemanticScan = true,
                 EnableYaraScan = false,
                 EnableGuardModelScan = true,
                 EnableMaliciousWordGroupList = false,
@@ -165,6 +166,7 @@ public sealed class SettingsYamlStoreTests
             var loaded = store.LoadScanningConfig();
             Assert.Equal(2, loaded.CodeFileExtensions.Count);
             Assert.Equal("vt-key", loaded.VirusTotalApiKey);
+            Assert.True(loaded.EnableSemanticScan);
             Assert.False(loaded.EnableYaraScan);
             Assert.True(loaded.EnableGuardModelScan);
             Assert.False(loaded.EnableMaliciousWordGroupList);
@@ -198,6 +200,7 @@ public sealed class SettingsYamlStoreTests
             var loaded = store.LoadScanningConfig();
 
             Assert.Equal(string.Empty, loaded.VirusTotalApiKey);
+            Assert.False(loaded.EnableSemanticScan);
             Assert.False(loaded.EnableVirusTotalSkillUrlScan);
             Assert.False(loaded.EnableVirusTotalScriptUrlScan);
         }

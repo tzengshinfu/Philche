@@ -23,6 +23,7 @@ public sealed class EvaluatorFactory
         var rulesStageEnabled = scanning.EnableMaliciousWordGroupList || scanning.EnableInvisibleCharacterDetection;
 
         if (!scanning.EnableYaraScan &&
+            !scanning.EnableSemanticScan &&
             !llmIntentEnabled &&
             !rulesStageEnabled &&
             !scanning.EnableVirusTotalSkillUrlScan &&
@@ -43,7 +44,7 @@ public sealed class EvaluatorFactory
 
         var flags = new RuntimeFeatureFlags
         {
-            EnableSemanticRiskStage = false,
+            EnableSemanticRiskStage = scanning.EnableSemanticScan,
             EnableGuardRiskStage = llmIntentEnabled,
             EnableMaliciousWordGroupRiskStage = scanning.EnableMaliciousWordGroupList,
             EnableInvisibleCharacterDetectionStage = scanning.EnableInvisibleCharacterDetection,
@@ -59,7 +60,7 @@ public sealed class EvaluatorFactory
 
         var evaluator = new SkillRiskEvaluator(
             new RuleDetector(),
-            new StubSemanticDetector(),
+            new TfIdfSemanticDetector(),
             guardClassifier,
             new NonBlockingRiskActionPolicy(),
             flags,
@@ -74,16 +75,11 @@ public sealed class EvaluatorFactory
             cveSimplifier,
             guardProvider,
             cveProvider,
+            scanning.EnableSemanticScan,
             scanning.EnableYaraScan,
-                llmIntentEnabled,
+            llmIntentEnabled,
             scanning.EnableRegexScan,
             scanning.EnableCveCorrelation);
-    }
-
-    private sealed class StubSemanticDetector : ISemanticSimilarityDetector
-    {
-        public Task<double> ScoreAsync(SkillEvaluationInput input, CancellationToken ct = default)
-            => Task.FromResult(0.0);
     }
 }
 
@@ -105,6 +101,8 @@ public sealed class EvaluatorSnapshot : IDisposable
 
     public bool CveDegraded => CveProvider is null || !CveProvider.IsAvailable;
 
+    public bool SemanticScanEnabled { get; }
+
     public bool YaraScanEnabled { get; }
 
     public bool GuardModelScanEnabled { get; }
@@ -121,6 +119,7 @@ public sealed class EvaluatorSnapshot : IDisposable
         ICveSummarySimplifier cveSummarySimplifier,
         GgufModelProvider? guardProvider,
         GgufModelProvider? cveProvider,
+        bool semanticScanEnabled,
         bool yaraScanEnabled,
         bool guardModelScanEnabled,
         bool regexScanEnabled,
@@ -131,6 +130,7 @@ public sealed class EvaluatorSnapshot : IDisposable
         CveSummarySimplifier = cveSummarySimplifier;
         GuardProvider = guardProvider;
         CveProvider = cveProvider;
+        SemanticScanEnabled = semanticScanEnabled;
         YaraScanEnabled = yaraScanEnabled;
         GuardModelScanEnabled = guardModelScanEnabled;
         RegexScanEnabled = regexScanEnabled;

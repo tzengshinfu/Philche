@@ -11,6 +11,7 @@ public sealed class ScanningConfig
 {
     public List<string> CodeFileExtensions { get; init; } = [];
     public string VirusTotalApiKey { get; init; } = string.Empty;
+    public bool EnableSemanticScan { get; init; }
     public bool EnableYaraScan { get; init; } = true;
     public bool EnableGuardModelScan { get; init; } = true;
     public bool EnableMaliciousWordGroupList { get; init; } = true;

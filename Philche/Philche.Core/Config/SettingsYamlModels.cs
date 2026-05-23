@@ -85,6 +85,9 @@ internal sealed class SettingsYamlScanning
     [YamlMember(Alias = "virusTotalApiKey")]
     public string? VirusTotalApiKey { get; init; }
 
+    [YamlMember(Alias = "enableSemanticScan")]
+    public bool? EnableSemanticScan { get; init; }
+
     [YamlMember(Alias = "enableYaraScan")]
     public bool? EnableYaraScan { get; init; }
 
