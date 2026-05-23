@@ -76,4 +76,44 @@ internal static class ConfirmDialog
         await dialog.ShowDialog(owner);
         return confirmed;
     }
+
+    public static async Task ShowMessageAsync(Window owner, string title, string message, string closeText = "OK")
+    {
+        var closeButton = new Button
+        {
+            Content = closeText,
+            Width = 110,
+        };
+
+        var dialog = new Window
+        {
+            Title = title,
+            Width = 460,
+            Height = 180,
+            CanResize = false,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Content = new StackPanel
+            {
+                Spacing = 16,
+                Margin = new Thickness(16),
+                Children =
+                {
+                    new TextBlock
+                    {
+                        Text = message,
+                        TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                    },
+                    new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal,
+                        HorizontalAlignment = HorizontalAlignment.Right,
+                        Children = { closeButton },
+                    },
+                },
+            },
+        };
+
+        closeButton.Click += (_, _) => dialog.Close();
+        await dialog.ShowDialog(owner);
+    }
 }

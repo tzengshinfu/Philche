@@ -73,13 +73,14 @@ public partial class MainWindow : Window
         DisplayNameTextBox.TextChanged += EditorTextChanged;
         GuardModelNameTextBox.TextChanged += EditorTextChanged;
         GuardModelPathTextBox.TextChanged += EditorTextChanged;
+        EnableSemanticScanCheckBox.IsCheckedChanged += EditorToggleChanged;
         EnableMaliciousWordsScanCheckBox.IsCheckedChanged += EditorToggleChanged;
         EnableInvisibleCharsScanCheckBox.IsCheckedChanged += EditorToggleChanged;
         EnableLlmIntentScanCheckBox.IsCheckedChanged += EditorToggleChanged;
         EnableYaraScanCheckBox.IsCheckedChanged += EditorToggleChanged;
         EnableRegexScanCheckBox.IsCheckedChanged += EditorToggleChanged;
-        EnableVirusTotalSkillUrlScanCheckBox.IsCheckedChanged += EditorToggleChanged;
-        EnableVirusTotalScriptUrlScanCheckBox.IsCheckedChanged += EditorToggleChanged;
+        EnableVirusTotalSkillUrlScanCheckBox.IsCheckedChanged += VirusTotalOptionChanged;
+        EnableVirusTotalScriptUrlScanCheckBox.IsCheckedChanged += VirusTotalOptionChanged;
         VirusTotalApiKeyTextBox.TextChanged += EditorTextChanged;
 
         Opened += async (_, _) =>
@@ -253,11 +254,16 @@ public partial class MainWindow : Window
         MarkDirty(localizer.Get("status.unsavedApplySaveSettings"));
     }
 
-    private void Save_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Save_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         try
         {
             if (!ApplyEditorToSelected())
+            {
+                return;
+            }
+
+            if (!await ValidateVirusTotalSelectionAsync())
             {
                 return;
             }
@@ -424,10 +430,30 @@ public partial class MainWindow : Window
 
         ScanOptionsHeaderTextBlock.Text = localizer.Get("tab.scanOptions");
         ScanOptionsDescriptionTextBlock.Text = localizer.Get("scanOptions.description");
+        ScanMethodsHelpButton.Content = localizer.Get("help.button");
+        ScanOptionsHelpButton.Content = localizer.Get("help.button");
         ScanFileContextMenuCheckBox.Content = localizer.Get("scanOptions.fileContextMenu");
         ScanDirectoryContextMenuCheckBox.Content = localizer.Get("scanOptions.dirContextMenu");
         VirusTotalApiKeyLabelTextBlock.Text = localizer.Get("scanOptions.virusTotalApiKey");
         VirusTotalApiKeyTextBox.Watermark = localizer.Get("scanOptions.virusTotalApiKeyWatermark");
+    }
+
+    private async void ShowScanMethodsHelp_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        await ConfirmDialog.ShowMessageAsync(
+            this,
+            localizer.Get("help.scanMethods.title"),
+            localizer.Get("help.scanMethods.message"),
+            localizer.Get("dialog.common.ok"));
+    }
+
+    private async void ShowScanOptionsHelp_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        await ConfirmDialog.ShowMessageAsync(
+            this,
+            localizer.Get("help.scanOptions.title"),
+            localizer.Get("help.scanOptions.message"),
+            localizer.Get("dialog.common.ok"));
     }
 
     private async Task ReloadFromYamlAsync()
@@ -562,6 +588,22 @@ public partial class MainWindow : Window
         MarkDirty(localizer.Get("status.unsavedSaveSettingsOrModels"));
     }
 
+    private async void VirusTotalOptionChanged(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        EditorToggleChanged(sender, e);
+
+        if (suppressDirtyTracking)
+        {
+            return;
+        }
+
+        var checkBox = sender as CheckBox;
+        if (checkBox?.IsChecked == true)
+        {
+            await ValidateVirusTotalSelectionAsync();
+        }
+    }
+
     private void MarkDirty(string? message = null)
     {
         if (isDirty)
@@ -655,13 +697,75 @@ public partial class MainWindow : Window
         await DownloadGuardModelFromHuggingFaceAsync();
     }
 
-    private async Task DownloadGuardModelFromHuggingFaceAsync()
+    internal async Task<bool> EnsureScanningPrerequisitesAsync()
+    {
+        if (!await ValidateVirusTotalSelectionAsync())
+        {
+            return false;
+        }
+
+        return await EnsureGuardModelReadyForScanAsync();
+    }
+
+    private async Task<bool> EnsureGuardModelReadyForScanAsync()
+    {
+        var scanning = settingsYamlStore.LoadScanningConfig();
+        if (!(scanning.EnableGuardModelScan && scanning.EnableLlmIntentRecognition))
+        {
+            return true;
+        }
+
+        var modelPaths = settingsYamlStore.LoadModelPaths();
+        if (!string.IsNullOrWhiteSpace(modelPaths.GuardModelPath) && File.Exists(modelPaths.GuardModelPath))
+        {
+            return true;
+        }
+
+        OpenModelsTab();
+
+        var shouldDownload = await ConfirmDialog.ShowAsync(
+            this,
+            title: localizer.Get("dialog.ggufMissing.title"),
+            message: localizer.Get("dialog.ggufMissing.message"),
+            confirmText: localizer.Get("dialog.ggufMissing.confirm"),
+            cancelText: localizer.Get("dialog.ggufMissing.cancel"));
+
+        if (!shouldDownload)
+        {
+            StatusTextBlock.Text = localizer.Get("status.guardModel.requiredForScan");
+            return false;
+        }
+
+        return await DownloadGuardModelFromHuggingFaceAsync(showProgressDialog: true);
+    }
+
+    private async Task<bool> ValidateVirusTotalSelectionAsync()
+    {
+        var isVirusTotalEnabled = (EnableVirusTotalSkillUrlScanCheckBox.IsChecked ?? false) ||
+                                  (EnableVirusTotalScriptUrlScanCheckBox.IsChecked ?? false);
+        if (!isVirusTotalEnabled || !string.IsNullOrWhiteSpace(VirusTotalApiKeyTextBox.Text))
+        {
+            return true;
+        }
+
+        StatusTextBlock.Text = localizer.Get("status.virusTotalApiKeyMissing");
+        await ConfirmDialog.ShowMessageAsync(
+            this,
+            localizer.Get("dialog.virusTotalApiKeyMissing.title"),
+            localizer.Get("dialog.virusTotalApiKeyMissing.message"),
+            localizer.Get("dialog.common.ok"));
+        return false;
+    }
+
+    private async Task<bool> DownloadGuardModelFromHuggingFaceAsync(bool showProgressDialog = false)
     {
         if (!await EnsureLlamaLicenseAcceptedAsync())
         {
             StatusTextBlock.Text = localizer.Get("status.downloadCanceledNoModel");
-            return;
+            return false;
         }
+
+        GuardModelDownloadDialog? dialog = null;
 
         try
         {
@@ -675,6 +779,13 @@ public partial class MainWindow : Window
             GuardDownloadProgressBar.IsVisible = true;
             GuardDownloadProgressBar.Value = 0;
 
+            if (showProgressDialog)
+            {
+                dialog = new GuardModelDownloadDialog(localizer.Get("dialog.ggufDownload.title"));
+                dialog.UpdateStatus(string.Format(localizer.Get("status.guardModelDownloading"), modelName, 1, 1, "Hugging Face"));
+                dialog.Show(this);
+            }
+
             var progress = new Progress<(long downloaded, long total)>(state =>
             {
                 if (state.total <= 0)
@@ -684,13 +795,14 @@ public partial class MainWindow : Window
 
                 var percentage = Math.Clamp(state.downloaded * 100.0 / state.total, 0, 100);
                 GuardDownloadProgressBar.Value = percentage;
+                dialog?.UpdateProgress(percentage);
             });
 
             var downloadedPath = await guardModelDownloader.DownloadAsync(
                 modelName,
                 modelDir,
                 progress,
-                UpdateGuardDownloadStatus,
+                status => UpdateGuardDownloadStatus(status, dialog),
                 CancellationToken.None);
 
             GuardModelNameTextBox.Text = modelName;
@@ -699,33 +811,46 @@ public partial class MainWindow : Window
 
             RefreshModelStatus();
             StatusTextBlock.Text = string.Format(localizer.Get("status.modelDownloaded"), Path.GetFileName(downloadedPath));
+            dialog?.UpdateProgress(100);
+            dialog?.UpdateStatus(StatusTextBlock.Text);
+            return true;
         }
         catch (OperationCanceledException)
         {
             StatusTextBlock.Text = localizer.Get("status.modelDownloadCanceled");
+            return false;
         }
         catch (Exception ex)
         {
             StatusTextBlock.Text = string.Format(localizer.Get("status.modelDownloadFailed"), ex.Message);
+            dialog?.UpdateStatus(StatusTextBlock.Text);
+            return false;
         }
         finally
         {
             GuardDownloadProgressBar.IsVisible = false;
+            if (dialog is not null)
+            {
+                await Task.Delay(250);
+                dialog.Close();
+            }
         }
     }
 
-    private void UpdateGuardDownloadStatus(GuardModelDownloadStatus status)
+    private void UpdateGuardDownloadStatus(GuardModelDownloadStatus status, GuardModelDownloadDialog? dialog = null)
     {
         var sourceLabel = HuggingFaceGuardModelDownloader.BuildSourceLabel(status.DownloadUri);
 
         if (status.Kind == GuardModelDownloadStatusKind.Attempting)
         {
-            StatusTextBlock.Text = string.Format(
+            var message = string.Format(
                 localizer.Get("status.guardModelDownloading"),
                 status.ModelName,
                 status.AttemptNumber,
                 status.AttemptCount,
                 sourceLabel);
+            StatusTextBlock.Text = message;
+            dialog?.UpdateStatus(message);
             return;
         }
 
@@ -733,11 +858,13 @@ public partial class MainWindow : Window
             ? "next source"
             : HuggingFaceGuardModelDownloader.BuildSourceLabel(status.NextDownloadUri);
 
-        StatusTextBlock.Text = string.Format(
+        var fallbackMessage = string.Format(
             localizer.Get("status.guardModelRetrying"),
             sourceLabel,
             status.Error?.Message,
             nextSourceLabel);
+        StatusTextBlock.Text = fallbackMessage;
+        dialog?.UpdateStatus(fallbackMessage);
     }
 
     private async Task<bool> EnsureLlamaLicenseAcceptedAsync()
@@ -814,6 +941,7 @@ public partial class MainWindow : Window
     {
         var scanning = settingsYamlStore.LoadScanningConfig();
         suppressDirtyTracking = true;
+        EnableSemanticScanCheckBox.IsChecked = scanning.EnableSemanticScan;
         EnableYaraScanCheckBox.IsChecked = scanning.EnableYaraScan;
         EnableMaliciousWordsScanCheckBox.IsChecked = scanning.EnableMaliciousWordGroupList;
         EnableInvisibleCharsScanCheckBox.IsChecked = scanning.EnableInvisibleCharacterDetection;
@@ -831,6 +959,7 @@ public partial class MainWindow : Window
         return new ScanningConfig
         {
             CodeFileExtensions = existing.CodeFileExtensions,
+            EnableSemanticScan = EnableSemanticScanCheckBox.IsChecked ?? false,
             EnableYaraScan = EnableYaraScanCheckBox.IsChecked ?? true,
             EnableGuardModelScan = EnableLlmIntentScanCheckBox.IsChecked ?? true,
             EnableMaliciousWordGroupList = EnableMaliciousWordsScanCheckBox.IsChecked ?? true,

@@ -172,6 +172,7 @@
 
                     <Border Grid.Row="1" BorderThickness="1" Padding="10">
                         <WrapPanel Orientation="Horizontal">
+                            <CheckBox x:Name="EnableSemanticScanCheckBox" Content="Semantic" IsChecked="False" Margin="0,0,16,0" />
                             <CheckBox x:Name="EnableRegexScanCheckBox" Content="Regex" IsChecked="True" Margin="0,0,16,0" />
                             <CheckBox x:Name="EnableMaliciousWordsScanCheckBox" Content="Malicious word group list" IsChecked="True" Margin="0,0,16,0" />
                             <CheckBox x:Name="EnableInvisibleCharsScanCheckBox" Content="Invisible character detection" IsChecked="True" Margin="0,0,16,0" />
@@ -190,6 +191,8 @@
                     </Border>
 
                     <TextBlock Grid.Row="4" x:Name="ModelManagementHeaderTextBlock" FontWeight="SemiBold" Text="Model Management" Margin="0,8,0,0" />
+
+                    <Button Grid.Row="4" x:Name="ScanMethodsHelpButton" HorizontalAlignment="Right" Width="110" Content="Help" Click="ShowScanMethodsHelp_Click" Margin="0,8,0,0" />
 
                     <Border Grid.Row="5" BorderThickness="1" Padding="10">
                         <StackPanel Spacing="8">
@@ -221,6 +224,11 @@
                     <TextBlock x:Name="ScanOptionsHeaderTextBlock"
                                FontWeight="SemiBold"
                                Text="Scan Options" />
+                        <Button x:Name="ScanOptionsHelpButton"
+                            HorizontalAlignment="Right"
+                            Width="110"
+                            Content="Help"
+                            Click="ShowScanOptionsHelp_Click" />
                     <TextBlock x:Name="ScanOptionsDescriptionTextBlock"
                                Grid.Row="1"
                                TextWrapping="Wrap"

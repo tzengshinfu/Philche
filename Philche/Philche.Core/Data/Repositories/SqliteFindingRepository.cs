@@ -65,6 +65,15 @@ public sealed class SqliteFindingRepository : IFindingRepository
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    public async Task DeleteByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        await using var connection = connectionFactory.CreateOpenConnection();
+        var command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM findings WHERE id = $id;";
+        command.Parameters.AddWithValue("$id", id);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task<Finding?> FindByIdAsync(string id, CancellationToken cancellationToken = default)
     {
         await using var connection = connectionFactory.CreateOpenConnection();

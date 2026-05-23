@@ -6,6 +6,8 @@ using Avalonia.Threading;
 using Microsoft.Win32;
 using Philche.Core.Config;
 using Philche.Core.Data;
+using Philche.Core.Domain.Enums;
+using Philche.Core.Domain.Models;
 using Philche.Core.Discovery;
 using Philche.Core.Localization;
 using Philche.Core.Orchestration;
@@ -21,6 +23,7 @@ public partial class App : Application
     private MainWindow? mainWindow;
     private SettingsYamlStore? settingsStore;
     private ScanScheduler? scanScheduler;
+    private PromptRiskScanExecutor? promptRiskScanExecutor;
     private PhilcheDataStore? dataStore;
     private AgentCodeCollector? codeCollector;
     private SkillsFileWatcher? skillsFileWatcher;
@@ -174,6 +177,11 @@ public partial class App : Application
             if (scanScheduler.ActiveScanCount > 0)
             {
                 scanScheduler.StopAllScans();
+                return;
+            }
+
+            if (!await EnsureScanPrerequisitesAsync())
+            {
                 return;
             }
 
@@ -440,6 +448,7 @@ public partial class App : Application
 
         dataStore = new PhilcheDataStore(dbPath);
         await dataStore.MigrationRunner.ApplyAsync();
+        promptRiskScanExecutor = new PromptRiskScanExecutor(settingsStore, dataStore.ScanTargets, dataStore.Findings, dataStore.ScanCache);
 
         var allCatalogEntries = settingsStore.LoadCatalog();
         var enabledAgents = (await wslCatalogResolver.ExpandAsync(allCatalogEntries)).ToList();
@@ -467,10 +476,11 @@ public partial class App : Application
                 MinimumAcceleratedInterval = TimeSpan.FromSeconds(10),
             },
             dataStore.ScanRuns,
-            (_, _, _) => Task.FromResult(new ScanExecutionResult(0, 0, 0)),
+            ExecutePromptScanAsync,
             codeScanExecutor: null,
             agentCodeCollector: codeCollector,
-            catalogEntries: enabledAgents);
+            catalogEntries: enabledAgents,
+            scanCacheRepository: dataStore.ScanCache);
 
         scanScheduler.ScanProgress += OnScanProgress;
     }
@@ -491,6 +501,11 @@ public partial class App : Application
 
         if (schedulerConfig.ScanOnStartup)
         {
+            if (!await EnsureScanPrerequisitesAsync())
+            {
+                return;
+            }
+
             await scanScheduler.TryRunManualAsync(DateTimeOffset.UtcNow);
         }
 
@@ -570,6 +585,11 @@ public partial class App : Application
 
         try
         {
+            if (!await EnsureScanPrerequisitesAsync())
+            {
+                return;
+            }
+
             await scanScheduler.TryRunScopedAsync(
                 ScanTriggerReason.SkillsFolderChanged,
                 agentKey,
@@ -661,6 +681,11 @@ public partial class App : Application
                     return;
                 }
 
+                if (!await EnsureScanPrerequisitesAsync())
+                {
+                    return;
+                }
+
                 await scanScheduler.TryRunScopedAsync(
                     ScanTriggerReason.ContextMenuScan,
                     agentKey: null,
@@ -737,6 +762,11 @@ public partial class App : Application
                     }
 
                     if (!schedulerConfig.PeriodicScanEnabled || scanScheduler is null)
+                    {
+                        continue;
+                    }
+
+                    if (!await EnsureScanPrerequisitesAsync())
                     {
                         continue;
                     }
@@ -830,6 +860,55 @@ public partial class App : Application
                 }
             }
         });
+    }
+
+    private async Task<bool> EnsureScanPrerequisitesAsync()
+    {
+        if (settingsStore is null)
+        {
+            return true;
+        }
+
+        var scanning = settingsStore.LoadScanningConfig();
+        var needsPrompt = ((scanning.EnableVirusTotalSkillUrlScan || scanning.EnableVirusTotalScriptUrlScan) &&
+                           string.IsNullOrWhiteSpace(scanning.VirusTotalApiKey)) ||
+                          (scanning.EnableGuardModelScan && scanning.EnableLlmIntentRecognition &&
+                           (string.IsNullOrWhiteSpace(settingsStore.LoadModelPaths().GuardModelPath) ||
+                            !File.Exists(settingsStore.LoadModelPaths().GuardModelPath)));
+        if (!needsPrompt)
+        {
+            return true;
+        }
+
+        var completion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        Dispatcher.UIThread.Post(async () =>
+        {
+            try
+            {
+                ShowMainWindow();
+                var result = await EnsureMainWindow().EnsureScanningPrerequisitesAsync();
+                completion.TrySetResult(result);
+            }
+            catch (Exception ex)
+            {
+                completion.TrySetException(ex);
+            }
+        });
+
+        return await completion.Task;
+    }
+
+    private async Task<ScanExecutionResult> ExecutePromptScanAsync(
+        IReadOnlyList<KnownAgentCatalogEntry> catalogEntries,
+        string triggerReason,
+        CancellationToken cancellationToken)
+    {
+        if (promptRiskScanExecutor is null)
+        {
+            return new ScanExecutionResult(0, 0, 0);
+        }
+
+        return await promptRiskScanExecutor.ExecuteAsync(catalogEntries, triggerReason, cancellationToken);
     }
 
     private void UpdateScanActionMenuText()

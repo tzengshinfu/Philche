@@ -52,9 +52,13 @@ public sealed class MainWindowUiTests
     {
         var window = new MainWindow();
 
+        Assert.NotNull(window.EnableSemanticScanCheckBox);
+        Assert.NotNull(window.ScanMethodsHelpButton);
+        Assert.NotNull(window.ScanOptionsHelpButton);
         Assert.NotNull(window.EnableVirusTotalSkillUrlScanCheckBox);
         Assert.NotNull(window.EnableVirusTotalScriptUrlScanCheckBox);
         Assert.NotNull(window.VirusTotalApiKeyTextBox);
+        Assert.Equal("Semantic", window.EnableSemanticScanCheckBox.Content);
         Assert.Equal("URL", window.EnableVirusTotalSkillUrlScanCheckBox.Content);
         Assert.Equal("URL", window.EnableVirusTotalScriptUrlScanCheckBox.Content);
         var watermark = window.VirusTotalApiKeyTextBox.Watermark?.ToString();
