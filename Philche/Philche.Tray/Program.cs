@@ -10,6 +10,8 @@ internal static class Program
 {
     private const string CliArgument = "--cli";
     private const string FormatArgument = "--format";
+    private const string HelpArgument = "--help";
+    private const string ShortHelpArgument = "-h";
     private const string SingleInstanceMutexName = "Philche.Tray.Singleton";
     private const string OpenModelsProtocol = "philche-open-models";
     private const string OpenModelsSignalName = "Philche.Tray.OpenModels";
@@ -28,10 +30,18 @@ internal static class Program
     {
         RegisterUnhandledExceptionHooks();
 
-        if (IsCliMode(args))
+        if (IsCliMode(args) || IsHelpMode(args))
         {
             ConsoleHelper.EnsureConsole();
-            var exitCode = CliRunner.RunAsync(ExtractScanPaths(args), ExtractFormat(args)).GetAwaiter().GetResult();
+
+            if (IsHelpMode(args))
+            {
+                Console.WriteLine(CliRunner.BuildHelpText());
+                Environment.Exit(0);
+                return;
+            }
+
+            var exitCode = CliRunner.RunAsync(ExtractScanPaths(args), ExtractFormat(args), ExtractCliScanOptions(args)).GetAwaiter().GetResult();
             Environment.Exit(exitCode);
             return;
         }
@@ -181,6 +191,13 @@ internal static class Program
         return args.Any(static arg => string.Equals(arg, CliArgument, StringComparison.OrdinalIgnoreCase));
     }
 
+    internal static bool IsHelpMode(string[] args)
+    {
+        return args.Any(arg =>
+            string.Equals(arg, HelpArgument, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(arg, ShortHelpArgument, StringComparison.OrdinalIgnoreCase));
+    }
+
     internal static IReadOnlyList<string> ExtractScanPaths(string[] args)
     {
         var flagIndex = Array.FindIndex(args, static arg => string.Equals(arg, ScanArgument, StringComparison.OrdinalIgnoreCase));
@@ -223,6 +240,38 @@ internal static class Program
         return string.Equals(format, "json", StringComparison.OrdinalIgnoreCase)
             ? "json"
             : "text";
+    }
+
+    internal static CliRunner.CliScanOptions ExtractCliScanOptions(string[] args)
+    {
+        return new CliRunner.CliScanOptions(
+            EnableAll: HasFlag(args, "--all"),
+            EnableVirusTotal: HasFlag(args, "--virustotal"),
+            EnableGguf: HasFlag(args, "--gguf"),
+            EnableSemantic: HasFlag(args, "--semantic"),
+            EnableYara: HasFlag(args, "--yara"),
+            EnableRules: HasFlag(args, "--rules"),
+            EnableRegex: HasFlag(args, "--regex"),
+            VirusTotalApiKey: ExtractOptionValue(args, "--virustotal-api-key"));
+    }
+
+    private static bool HasFlag(string[] args, string flag)
+    {
+        return args.Any(arg => string.Equals(arg, flag, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static string ExtractOptionValue(string[] args, string flag)
+    {
+        var flagIndex = Array.FindIndex(args, arg => string.Equals(arg, flag, StringComparison.OrdinalIgnoreCase));
+        if (flagIndex < 0 || flagIndex >= args.Length - 1)
+        {
+            return string.Empty;
+        }
+
+        var value = args[flagIndex + 1]?.Trim();
+        return string.IsNullOrWhiteSpace(value) || value.StartsWith("--", StringComparison.Ordinal)
+            ? string.Empty
+            : value;
     }
 
     private static void SignalOpenModels()
