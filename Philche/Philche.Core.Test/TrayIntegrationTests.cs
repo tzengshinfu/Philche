@@ -73,6 +73,26 @@ public sealed class TrayIntegrationTests
         Assert.Empty(paths);
     }
 
+    [Fact(DisplayName = "系統匣整合測試：Gui Mode Scan Arguments Are Accepted Without Cli Flag")]
+    public void GuiMode_ScanArguments_AreAcceptedWithoutCliFlag()
+    {
+        string[] args =
+        [
+            "philche.exe",
+            "--scan",
+            @"C:\temp\a.py",
+            @"C:\temp\skills",
+        ];
+
+        Assert.False(Program.IsCliMode(args));
+
+        var paths = Program.ExtractScanPaths(args);
+
+        Assert.Equal(2, paths.Count);
+        Assert.Equal(@"C:\temp\a.py", paths[0]);
+        Assert.Equal(@"C:\temp\skills", paths[1]);
+    }
+
     [Fact]
     public void ExtractCliScanOptions_ParsesMethodFlagsAndApiKey()
     {
