@@ -10,7 +10,7 @@ namespace Philche.Core.Test;
 
 public sealed class MainWindowUiTests
 {
-    [AvaloniaFact]
+    [AvaloniaFact(DisplayName = "主視窗 UI 測試：Scan Progress Controls Are Bound To Controller And Reflect Progress")]
     public void ScanProgressControls_AreBoundToController_AndReflectProgress()
     {
         var window = new MainWindow();
@@ -37,7 +37,7 @@ public sealed class MainWindowUiTests
         Assert.Single(window.ScanProgressListBox.ItemsSource!.Cast<object>());
     }
 
-    [AvaloniaFact]
+    [AvaloniaFact(DisplayName = "主視窗 UI 測試：Open Scan Progress Tab Selects Scan Progress Tab")]
     public void OpenScanProgressTab_SelectsScanProgressTab()
     {
         var window = new MainWindow();
@@ -47,7 +47,7 @@ public sealed class MainWindowUiTests
         Assert.Same(window.ScanProgressTabItem, window.RootTabControl.SelectedItem);
     }
 
-    [AvaloniaFact]
+    [AvaloniaFact(DisplayName = "主視窗 UI 測試：Main Window Exposes Virus Total Controls")]
     public void MainWindow_ExposesVirusTotalControls()
     {
         var window = new MainWindow();
@@ -67,7 +67,7 @@ public sealed class MainWindowUiTests
             string.Equals(watermark, "Enter VT_API_KEY", StringComparison.Ordinal));
     }
 
-    [AvaloniaFact]
+    [AvaloniaFact(DisplayName = "主視窗 UI 測試：Load Findings Async Includes Latest Code Scan Risk Paths")]
     public async Task LoadFindingsAsync_IncludesLatestCodeScanRiskPaths()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-mainwindow-{Guid.NewGuid():N}.db");
@@ -135,3 +135,5 @@ public sealed class MainWindowUiTests
         }
     }
 }
+
+

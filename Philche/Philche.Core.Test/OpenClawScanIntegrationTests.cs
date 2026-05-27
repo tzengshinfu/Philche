@@ -37,7 +37,7 @@ public sealed class OpenClawScanIntegrationTests
 
     // ────────────────────── 1. Discovery ────────────────────────
 
-    [Fact]
+    [Fact(DisplayName = "OpenClaw 掃描整合測試：Discovery Finds Open Claw On Host")]
     public async Task Discovery_FindsOpenClawOnHost()
     {
         var service = new HostAgentDiscoveryService();
@@ -53,7 +53,7 @@ public sealed class OpenClawScanIntegrationTests
 
     // ────────────────── 2. Prompt Risk Scan ─────────────────────
 
-    [Fact]
+    [Fact(DisplayName = "OpenClaw 掃描整合測試：Prompt Risk Scan Skill Md Detects High Risk")]
     public async Task PromptRiskScan_SkillMd_DetectsHighRisk()
     {
         var skillMdPath = Path.Combine(SkillsRoot, "demo-data-export", "SKILL.md");
@@ -77,7 +77,7 @@ public sealed class OpenClawScanIntegrationTests
 
     // ──────────────────── 3. Code Scan ──────────────────────────
 
-    [Fact]
+    [Fact(DisplayName = "OpenClaw 掃描整合測試：Code Scan Export Helper Py Detects Findings")]
     public async Task CodeScan_ExportHelperPy_DetectsFindings()
     {
         Assert.True(Directory.Exists(SkillsRoot), $"Skills root not found: {SkillsRoot}");
@@ -104,7 +104,7 @@ public sealed class OpenClawScanIntegrationTests
 
     // ──────────── 4. Code evaluated as SkillRiskEvaluator ───────
 
-    [Fact]
+    [Fact(DisplayName = "OpenClaw 掃描整合測試：Code Risk Export Helper Py Detects Risk")]
     public async Task CodeRisk_ExportHelperPy_DetectsRisk()
     {
         var codePath = Path.Combine(SkillsRoot, "demo-data-export", "export_helper.py");
@@ -126,7 +126,7 @@ public sealed class OpenClawScanIntegrationTests
 
     // ───────────── 5. Agent Config Parse Verification ─────────────
 
-    [Fact]
+    [Fact(DisplayName = "OpenClaw 掃描整合測試：Agent Config Exists And Contains Mcp Servers")]
     public void AgentConfig_ExistsAndContainsMcpServers()
     {
         Assert.True(File.Exists(McpConfigPath), $"openclaw.json not found at {McpConfigPath}");
@@ -151,7 +151,7 @@ public sealed class OpenClawScanIntegrationTests
 
     // ─────────────── 6. Full Pipeline Summary ───────────────────
 
-    [Fact]
+    [Fact(DisplayName = "OpenClaw 掃描整合測試：Full Pipeline Open Claw Scan Summary")]
     public async Task FullPipeline_OpenClawScanSummary()
     {
         // Discovery
@@ -241,15 +241,15 @@ public sealed class OpenClawScanIntegrationTests
     // ────────────── 7. Ad-hoc Single-File Prompt Scan ──────────
 
     /// <summary>
-    /// Scans a single prompt file from the test-samples directory.
+    /// Scans a single prompt file from the test-skills directory.
     /// Change <see cref="SingleFileRelativePath"/> to point at any .md / .txt file.
-    /// Run:  dotnet test --filter "ScanSinglePromptFile" -l "console;verbosity=detailed"
+    /// Run:  dotnet test --filter "ScanSingleFilePrompt" -l "console;verbosity=detailed"
     /// </summary>
     private static readonly string SingleFileRelativePath = Path.Combine(
         "malicious-agent-skill", "SKILL.md");
 
-    [Fact]
-    public async Task ScanSinglePromptFile()
+    [Fact(DisplayName = "OpenClaw 掃描整合測試：Scan Single File Prompt")]
+    public async Task ScanSingleFilePrompt()
     {
         var singleFilePath = ResolveTestSamplePath(SingleFileRelativePath);
         Assert.True(File.Exists(singleFilePath), $"File not found: {singleFilePath}");
@@ -269,6 +269,52 @@ public sealed class OpenClawScanIntegrationTests
         Assert.NotEmpty(result.Evidence);
     }
 
+    /// <summary>
+    /// Scans all SKILL.md files from the test-skills directory.
+    /// Run:  dotnet test --filter "ScanTestSkillsDirectory" -l "console;verbosity=detailed"
+    /// </summary>
+    [Fact(DisplayName = "OpenClaw 掃描整合測試：Scan Test Skills Directory")]
+    public async Task ScanTestSkillsDirectory()
+    {
+        var skillsRoot = ResolveTestSamplePath(string.Empty);
+        Assert.True(Directory.Exists(skillsRoot), $"Directory not found: {skillsRoot}");
+
+        var skillFiles = Directory
+            .GetFiles(skillsRoot, "SKILL.md", SearchOption.AllDirectories)
+            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        Assert.NotEmpty(skillFiles);
+
+        var evaluator = BuildEvaluator();
+        var scannedCount = 0;
+        var filesWithEvidence = 0;
+
+        foreach (var skillFile in skillFiles)
+        {
+            var content = await File.ReadAllTextAsync(skillFile);
+            var input = new SkillEvaluationInput(content, skillFile, IsCode: false);
+            var result = await evaluator.EvaluateAsync(input);
+
+            scannedCount++;
+            if (result.Evidence.Count > 0)
+            {
+                filesWithEvidence++;
+            }
+
+            Output($"[Directory Prompt Scan] {Path.GetRelativePath(skillsRoot, skillFile)}");
+            Output($"  Risk Level:    {result.RiskLevel}");
+            Output($"  Degraded Mode: {result.IsDegradedMode}");
+            foreach (var e in result.Evidence)
+                Output($"  [{e.Detector}] score={e.Score:F3} — {e.Message}");
+        }
+
+        Output($"[Directory Prompt Scan Summary] scanned={scannedCount} filesWithEvidence={filesWithEvidence}");
+
+        Assert.Equal(skillFiles.Length, scannedCount);
+        Assert.True(filesWithEvidence > 0, "Expected at least one test skill file to produce scan evidence.");
+    }
+
     // ────────────────────── private ─────────────────────────────
 
     private static string ResolveTestSamplePath(string relativePath)
@@ -276,7 +322,7 @@ public sealed class OpenClawScanIntegrationTests
         var current = new DirectoryInfo(AppContext.BaseDirectory);
         while (current is not null)
         {
-            var candidateRoot = Path.Combine(current.FullName, "test-samples");
+            var candidateRoot = Path.Combine(current.FullName, "test-skills");
             if (Directory.Exists(candidateRoot))
             {
                 return Path.Combine(candidateRoot, relativePath);
@@ -286,7 +332,7 @@ public sealed class OpenClawScanIntegrationTests
         }
 
         throw new DirectoryNotFoundException(
-            $"Unable to locate 'test-samples' from base directory: {AppContext.BaseDirectory}");
+            $"Unable to locate 'test-skills' from base directory: {AppContext.BaseDirectory}");
     }
 
     private static SkillRiskEvaluator BuildEvaluator()
@@ -310,3 +356,5 @@ public sealed class OpenClawScanIntegrationTests
 
     private static void Output(string message) => Console.WriteLine(message);
 }
+
+

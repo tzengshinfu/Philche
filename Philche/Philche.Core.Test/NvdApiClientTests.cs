@@ -6,7 +6,7 @@ namespace Philche.Core.Test;
 
 public sealed class NvdApiClientTests
 {
-    [Fact]
+    [Fact(DisplayName = "NVD API 用戶端測試：Query By Cpe Async Builds Correct Url")]
     public async Task QueryByCpeAsync_BuildsCorrectUrl()
     {
         var capturedRequests = new List<string>();
@@ -29,7 +29,7 @@ public sealed class NvdApiClientTests
         Assert.DoesNotContain("keywordSearch", url);
     }
 
-    [Fact]
+    [Fact(DisplayName = "NVD API 用戶端測試：Query By Cpe Async Encodes Special Characters In Cpe")]
     public async Task QueryByCpeAsync_EncodesSpecialCharactersInCpe()
     {
         var capturedRequests = new List<string>();
@@ -50,7 +50,7 @@ public sealed class NvdApiClientTests
         Assert.Contains("%3A", url);
     }
 
-    [Fact]
+    [Fact(DisplayName = "NVD API 用戶端測試：Query By Cpe Async Returns Empty On Non Success Status Code")]
     public async Task QueryByCpeAsync_ReturnsEmptyOnNonSuccessStatusCode()
     {
         var capturedRequests = new List<string>();
@@ -72,3 +72,5 @@ public sealed class NvdApiClientTests
         }
     }
 }
+
+

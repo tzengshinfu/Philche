@@ -4,7 +4,7 @@ namespace Philche.Core.Test;
 
 public sealed class WindowsShellContextMenuTests
 {
-    [Fact]
+    [Fact(DisplayName = "Windows Shell 內容選單測試：Get Default File Extensions Includes Expected Scannable Types")]
     public void GetDefaultFileExtensions_IncludesExpectedScannableTypes()
     {
         var extensions = WindowsShellContextMenu.GetDefaultFileExtensions();
@@ -14,7 +14,7 @@ public sealed class WindowsShellContextMenuTests
         Assert.Contains(".js", extensions);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Windows Shell 內容選單測試：Normalize File Extensions For Test Trims Prefixes And Deduplicates")]
     public void NormalizeFileExtensionsForTest_TrimsPrefixesAndDeduplicates()
     {
         var extensions = WindowsShellContextMenu.NormalizeFileExtensionsForTest([
@@ -32,7 +32,7 @@ public sealed class WindowsShellContextMenuTests
         Assert.Equal(".js", extensions[2]);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Windows Shell 內容選單測試：Build File Menu Key Path For Test Returns Expected Registry Path")]
     public void BuildFileMenuKeyPathForTest_ReturnsExpectedRegistryPath()
     {
         var path = WindowsShellContextMenu.BuildFileMenuKeyPathForTest(".py");
@@ -40,3 +40,5 @@ public sealed class WindowsShellContextMenuTests
         Assert.Equal(@"Software\Classes\SystemFileAssociations\.py\shell\Philche.ScanFile", path);
     }
 }
+
+

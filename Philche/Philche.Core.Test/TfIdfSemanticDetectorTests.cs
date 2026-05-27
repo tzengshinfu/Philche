@@ -4,7 +4,7 @@ namespace Philche.Core.Test;
 
 public sealed class TfIdfSemanticDetectorTests
 {
-    [Fact]
+    [Fact(DisplayName = "TF-IDF 語意偵測測試：Score Async Returns High Score For Similar Malicious Intent")]
     public async Task ScoreAsync_ReturnsHighScore_ForSimilarMaliciousIntent()
     {
         var detector = new TfIdfSemanticDetector();
@@ -17,7 +17,7 @@ public sealed class TfIdfSemanticDetectorTests
         Assert.True(score >= 0.35, $"Expected malicious semantic similarity >= 0.35 but got {score:F3}.");
     }
 
-    [Fact]
+    [Fact(DisplayName = "TF-IDF 語意偵測測試：Score Async Returns Low Score For Benign Prompt")]
     public async Task ScoreAsync_ReturnsLowScore_ForBenignPrompt()
     {
         var detector = new TfIdfSemanticDetector();
@@ -30,7 +30,7 @@ public sealed class TfIdfSemanticDetectorTests
         Assert.True(score < 0.2, $"Expected benign semantic similarity < 0.2 but got {score:F3}.");
     }
 
-    [Fact]
+    [Fact(DisplayName = "TF-IDF 語意偵測測試：Score Async Returns Zero For Empty Content")]
     public async Task ScoreAsync_ReturnsZero_ForEmptyContent()
     {
         var detector = new TfIdfSemanticDetector();
@@ -43,3 +43,5 @@ public sealed class TfIdfSemanticDetectorTests
         Assert.Equal(0d, score);
     }
 }
+
+

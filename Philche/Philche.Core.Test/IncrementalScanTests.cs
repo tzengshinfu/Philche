@@ -5,7 +5,7 @@ namespace Philche.Core.Test;
 
 public sealed class IncrementalScanTests
 {
-    [Fact]
+    [Fact(DisplayName = "增量掃描測試：Evaluate Prompt With Cache Async Hash Match Uses Cached Result")]
     public async Task EvaluatePromptWithCacheAsync_HashMatchUsesCachedResult()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-incremental-{Guid.NewGuid():N}.db");
@@ -43,7 +43,7 @@ public sealed class IncrementalScanTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "增量掃描測試：Compute Code Content Hash Async Changes When File Content Changes")]
     public async Task ComputeCodeContentHashAsync_ChangesWhenFileContentChanges()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-hash-{Guid.NewGuid():N}");
@@ -92,3 +92,5 @@ public sealed class IncrementalScanTests
         }
     }
 }
+
+

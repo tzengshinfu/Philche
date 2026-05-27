@@ -6,32 +6,32 @@ namespace Philche.Core.Test;
 
 public sealed class TrayIntegrationTests
 {
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Is Cli Mode Returns True When Cli Flag Present")]
     public void IsCliMode_ReturnsTrue_WhenCliFlagPresent()
     {
         Assert.True(Program.IsCliMode(["philche.exe", "--cli", "--scan", @"C:\temp\a.py"]));
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Is Help Mode Returns True When Help Flag Present")]
     public void IsHelpMode_ReturnsTrue_WhenHelpFlagPresent()
     {
         Assert.True(Program.IsHelpMode(["philche.exe", "--help"]));
         Assert.True(Program.IsHelpMode(["philche.exe", "-h"]));
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Extract Format Defaults To Text When Format Flag Missing")]
     public void ExtractFormat_DefaultsToText_WhenFormatFlagMissing()
     {
         Assert.Equal("text", Program.ExtractFormat(["philche.exe", "--cli", "--scan", @"C:\temp\a.py"]));
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Extract Format Returns Json When Json Format Specified")]
     public void ExtractFormat_ReturnsJson_WhenJsonFormatSpecified()
     {
         Assert.Equal("json", Program.ExtractFormat(["philche.exe", "--cli", "--scan", @"C:\temp\a.py", "--format", "json"]));
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Extract Scan Paths Returns Distinct Trimmed Paths After Scan Flag")]
     public void ExtractScanPaths_ReturnsDistinctTrimmedPathsAfterScanFlag()
     {
         var paths = Program.ExtractScanPaths(
@@ -48,7 +48,7 @@ public sealed class TrayIntegrationTests
         Assert.Equal(@"C:\temp\b.md", paths[1]);
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Extract Scan Paths Stops At Next Flag")]
     public void ExtractScanPaths_StopsAtNextFlag()
     {
         var paths = Program.ExtractScanPaths(
@@ -65,7 +65,7 @@ public sealed class TrayIntegrationTests
         Assert.Equal(@"\\wsl.localhost\Ubuntu-22.04\home\y1938\.openclaw\workspace\skills", paths[0]);
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Extract Scan Paths Returns Empty When Scan Flag Missing")]
     public void ExtractScanPaths_ReturnsEmpty_WhenScanFlagMissing()
     {
         var paths = Program.ExtractScanPaths(["philche.exe", @"C:\temp\a.py"]);
@@ -73,7 +73,7 @@ public sealed class TrayIntegrationTests
         Assert.Empty(paths);
     }
 
-    [Fact(DisplayName = "�t�ΧX��X���աGGui Mode Scan Arguments Are Accepted Without Cli Flag")]
+    [Fact(DisplayName = "系統匣整合測試：Gui Mode Scan Arguments Are Accepted Without Cli Flag")]
     public void GuiMode_ScanArguments_AreAcceptedWithoutCliFlag()
     {
         string[] args =
@@ -93,7 +93,7 @@ public sealed class TrayIntegrationTests
         Assert.Equal(@"C:\temp\skills", paths[1]);
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Extract Cli Scan Options Parses Method Flags And Api Key")]
     public void ExtractCliScanOptions_ParsesMethodFlagsAndApiKey()
     {
         var options = Program.ExtractCliScanOptions(
@@ -117,7 +117,7 @@ public sealed class TrayIntegrationTests
         Assert.Equal("vt-key", options.VirusTotalApiKey);
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Cli Runner Build Help Text Lists New Flags")]
     public void CliRunner_BuildHelpText_ListsNewFlags()
     {
         var help = CliRunner.BuildHelpText();
@@ -129,7 +129,7 @@ public sealed class TrayIntegrationTests
         Assert.Contains("--virustotal-api-key", help, StringComparison.Ordinal);
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Build Launch Command Includes Quoted Scan Arguments")]
     public void BuildLaunchCommand_IncludesQuotedScanArguments()
     {
         var command = Program.BuildLaunchCommand("--scan", "%1");
@@ -139,7 +139,7 @@ public sealed class TrayIntegrationTests
         Assert.Contains("\"%1\"", command, StringComparison.Ordinal);
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Scan Queue Ipc Enqueue And Drain Paths Round Trips Distinct Values")]
     public void ScanQueueIpc_EnqueueAndDrainPaths_RoundTripsDistinctValues()
     {
         ScanQueueIpc.DrainPaths();
@@ -161,7 +161,7 @@ public sealed class TrayIntegrationTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Scan Queue Ipc Register Listener Receives Queued Paths After Signal")]
     public async Task ScanQueueIpc_RegisterListener_ReceivesQueuedPathsAfterSignal()
     {
         ScanQueueIpc.DrainPaths();
@@ -192,7 +192,7 @@ public sealed class TrayIntegrationTests
         }
     }
 
-    [Fact(DisplayName = "�t�ΧX��X���աGHandle Existing Instance Activation Queues Gui Scan Paths")]
+    [Fact(DisplayName = "系統匣整合測試：Handle Existing Instance Activation Queues Gui Scan Paths")]
     public void HandleExistingInstanceActivation_QueuesGuiScanPaths()
     {
         ScanQueueIpc.DrainPaths();
@@ -215,7 +215,7 @@ public sealed class TrayIntegrationTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Resolve Scannable Files Expands Directories And Includes Markdown Files")]
     public void ResolveScannableFiles_ExpandsDirectories_AndIncludesMarkdownFiles()
     {
         var tempDir = CreateTempDirectory();
@@ -247,7 +247,7 @@ public sealed class TrayIntegrationTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Cli Runner Run Async Scans Clean Markdown File And Returns Zero")]
     public async Task CliRunner_RunAsync_ScansCleanMarkdownFile_AndReturnsZero()
     {
         var tempDir = CreateTempDirectory();
@@ -267,7 +267,7 @@ public sealed class TrayIntegrationTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Cli Runner Run Async Returns Three When Virus Total Requested Without Api Key")]
     public async Task CliRunner_RunAsync_ReturnsThree_WhenVirusTotalRequestedWithoutApiKey()
     {
         var tempDir = CreateTempDirectory();
@@ -299,7 +299,7 @@ public sealed class TrayIntegrationTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "系統匣整合測試：Cli Runner Run Async Downloads Guard Model When Requested And Confirmed")]
     public async Task CliRunner_RunAsync_DownloadsGuardModel_WhenRequestedAndConfirmed()
     {
         var tempDir = CreateTempDirectory();
@@ -417,3 +417,5 @@ public sealed class TrayIntegrationTests
         }
     }
 }
+
+

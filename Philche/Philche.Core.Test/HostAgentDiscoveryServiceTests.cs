@@ -5,7 +5,7 @@ namespace Philche.Core.Test;
 
 public sealed class HostAgentDiscoveryServiceTests
 {
-    [Fact]
+    [Fact(DisplayName = "主機代理探索服務測試：Discover Async Returns Only Known Agents Found On Configured Paths")]
     public async Task DiscoverAsync_ReturnsOnlyKnownAgentsFoundOnConfiguredPaths()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-discovery-{Guid.NewGuid():N}");
@@ -51,3 +51,5 @@ public sealed class HostAgentDiscoveryServiceTests
     }
 
 }
+
+

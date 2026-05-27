@@ -16,7 +16,7 @@ public sealed class ToastNotifierTests : IDisposable
         originalWarningLogger = ToastNotifier.WarningLogger;
     }
 
-    [Fact]
+    [Fact(DisplayName = "Toast 通知測試：Try Show When Toast Unsupported Logs Warning And Skips Sender")]
     public void TryShow_WhenToastUnsupported_LogsWarningAndSkipsSender()
     {
         var senderCalled = false;
@@ -36,7 +36,7 @@ public sealed class ToastNotifierTests : IDisposable
         Assert.Contains(warnings, warning => warning.Contains("not supported", StringComparison.OrdinalIgnoreCase));
     }
 
-    [Fact]
+    [Fact(DisplayName = "Toast 通知測試：Try Show Model Missing Includes Open Models Protocol Action")]
     public void TryShowModelMissing_IncludesOpenModelsProtocolAction()
     {
         string? capturedXml = null;
@@ -54,7 +54,7 @@ public sealed class ToastNotifierTests : IDisposable
         Assert.Contains("philche-open-models://open-models", capturedXml, StringComparison.Ordinal);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Toast 通知測試：Try Show Scan Completed With Findings Includes Count And Path")]
     public void TryShowScanCompleted_WithFindings_IncludesCountAndPath()
     {
         string? capturedXml = null;
@@ -89,3 +89,5 @@ public sealed class ToastNotifierTests : IDisposable
         ToastNotifier.WarningLogger = originalWarningLogger;
     }
 }
+
+

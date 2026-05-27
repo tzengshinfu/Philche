@@ -6,7 +6,7 @@ namespace Philche.Core.Test;
 
 public sealed class SkillRiskEvaluatorTests
 {
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Produces High For Strong Signals And Never Blocks")]
     public async Task EvaluateAsync_ProducesHighForStrongSignals_AndNeverBlocks()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -25,7 +25,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.False(result.IsDegradedMode);
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Produces Low When Signals Are Low")]
     public async Task EvaluateAsync_ProducesLowWhenSignalsAreLow()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -43,7 +43,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.False(result.ShouldBlock);
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Enters Degraded Mode When Detector Unavailable")]
     public async Task EvaluateAsync_EntersDegradedMode_WhenDetectorUnavailable()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -61,7 +61,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.Contains(result.Evidence, x => x.Detector == "semantic" && x.Message == "Detector unavailable");
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Skips Semantic Stage When Feature Flag Disabled")]
     public async Task EvaluateAsync_SkipsSemanticStage_WhenFeatureFlagDisabled()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -80,7 +80,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.Contains(result.Evidence, x => x.Detector == "semantic" && x.Message == "Detector disabled by feature flag");
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Skips Guard Stage When Feature Flag Disabled")]
     public async Task EvaluateAsync_SkipsGuardStage_WhenFeatureFlagDisabled()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -99,7 +99,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.Contains(result.Evidence, x => x.Detector == "guard" && x.Message == "Detector disabled by feature flag");
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Sends Preprocessed Content To Semantic And Guard")]
     public async Task EvaluateAsync_SendsPreprocessedContent_ToSemanticAndGuard()
     {
         var semantic = new CapturingSemanticDetector(0.2);
@@ -130,7 +130,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.Equal(semantic.LastContent, guard.LastContent);
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Records Regex Stage Evidence")]
     public async Task EvaluateAsync_RecordsRegexStageEvidence()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -147,7 +147,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.Contains(result.Evidence, x => x.Detector == "regex");
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Skips Regex Stage When Feature Flag Disabled")]
     public async Task EvaluateAsync_SkipsRegexStage_WhenFeatureFlagDisabled()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -165,7 +165,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.Contains(result.Evidence, x => x.Detector == "regex" && x.Message == "Detector disabled by feature flag");
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Skips Malicious Word Group Stage When Feature Flag Disabled")]
     public async Task EvaluateAsync_SkipsMaliciousWordGroupStage_WhenFeatureFlagDisabled()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -187,7 +187,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.Contains(result.Evidence, x => x.Detector == "rules" && x.Message == "Detector disabled by feature flag");
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Skips Invisible Character Stage When Feature Flag Disabled")]
     public async Task EvaluateAsync_SkipsInvisibleCharacterStage_WhenFeatureFlagDisabled()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -232,7 +232,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.Contains(disabledResult.Evidence, x => x.Detector == "rules" && x.Message == "Detector disabled by feature flag");
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Uses Yara Path For Code Artifacts")]
     public async Task EvaluateAsync_UsesYaraPath_ForCodeArtifacts()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -253,7 +253,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.Contains(result.Evidence, x => x.Detector == "yara");
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Adds Virus Total Evidence For Script Urls")]
     public async Task EvaluateAsync_AddsVirusTotalEvidence_ForScriptUrls()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -276,7 +276,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.Equal(RiskLevel.High, result.RiskLevel);
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Adds Virus Total Evidence For Skill Urls")]
     public async Task EvaluateAsync_AddsVirusTotalEvidence_ForSkillUrls()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -299,7 +299,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.Equal(RiskLevel.High, result.RiskLevel);
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Reports Virus Total Api Key Issue When Enabled Without Key")]
     public async Task EvaluateAsync_ReportsVirusTotalApiKeyIssue_WhenEnabledWithoutKey()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -322,7 +322,7 @@ public sealed class SkillRiskEvaluatorTests
         Assert.Contains(result.Evidence, x => x.Detector == "virustotal-url" && x.Message.Contains("please-give-me-an-api-key", StringComparison.OrdinalIgnoreCase));
     }
 
-    [Fact]
+    [Fact(DisplayName = "技能風險評估測試：Evaluate Async Skips Yara When Feature Flag Disabled")]
     public async Task EvaluateAsync_SkipsYara_WhenFeatureFlagDisabled()
     {
         var evaluator = new SkillRiskEvaluator(
@@ -396,3 +396,5 @@ public sealed class SkillRiskEvaluatorTests
             => Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK));
     }
 }
+
+

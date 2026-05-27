@@ -7,7 +7,7 @@ namespace Philche.Core.Test;
 
 public sealed class ModelDownloaderTests
 {
-    [Fact]
+    [Fact(DisplayName = "模型下載測試：Download Async Succeeds When Sha Matches")]
     public async Task DownloadAsync_Succeeds_WhenShaMatches()
     {
         var payload = Encoding.UTF8.GetBytes("test-model-content");
@@ -45,7 +45,7 @@ public sealed class ModelDownloaderTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "模型下載測試：Download Async Throws When Sha Mismatch")]
     public async Task DownloadAsync_Throws_WhenShaMismatch()
     {
         var payload = Encoding.UTF8.GetBytes("test-model-content");
@@ -75,7 +75,7 @@ public sealed class ModelDownloaderTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "模型下載測試：Download Async Throws Operation Canceled When Canceled")]
     public async Task DownloadAsync_ThrowsOperationCanceled_WhenCanceled()
     {
         var payload = Encoding.UTF8.GetBytes(new string('a', 1024 * 1024));
@@ -107,7 +107,7 @@ public sealed class ModelDownloaderTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "模型下載測試：Fetch Async Parses Manifest")]
     public async Task FetchAsync_ParsesManifest()
     {
         var json = """
@@ -153,3 +153,5 @@ public sealed class ModelDownloaderTests
         }
     }
 }
+
+

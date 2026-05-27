@@ -4,7 +4,7 @@ namespace Philche.Core.Test;
 
 public sealed class HuggingFaceGuardModelDownloaderTests
 {
-    [Fact]
+    [Fact(DisplayName = "HuggingFace Guard 模型下載測試：Download Async Falls Back To Second Source When First Source Fails")]
     public async Task DownloadAsync_FallsBackToSecondSource_WhenFirstSourceFails()
     {
         var downloader = new SequenceModelDownloader(
@@ -44,7 +44,7 @@ public sealed class HuggingFaceGuardModelDownloaderTests
             });
     }
 
-    [Fact]
+    [Fact(DisplayName = "HuggingFace Guard 模型下載測試：Download Async Throws Last Error When All Sources Fail")]
     public async Task DownloadAsync_ThrowsLastError_WhenAllSourcesFail()
     {
         var downloader = new SequenceModelDownloader(
@@ -89,3 +89,5 @@ public sealed class HuggingFaceGuardModelDownloaderTests
         }
     }
 }
+
+

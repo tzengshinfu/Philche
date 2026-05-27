@@ -7,7 +7,7 @@ public sealed class RuleDetectorTests
 {
     private readonly RuleDetector detector = new();
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Detects Luhn And Cvc Context")]
     public void Score_DetectsLuhnAndCvcContext()
     {
         var input = new SkillEvaluationInput(
@@ -20,7 +20,7 @@ public sealed class RuleDetectorTests
         Assert.True(score >= 0.35);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Detects User System Structure")]
     public void Score_DetectsUserSystemStructure()
     {
         var input = new SkillEvaluationInput(
@@ -33,7 +33,7 @@ public sealed class RuleDetectorTests
         Assert.True(score >= 0.2);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Detects Zero Width And Bidi Characters")]
     public void Score_DetectsZeroWidthAndBidiCharacters()
     {
         var input = new SkillEvaluationInput(
@@ -46,7 +46,7 @@ public sealed class RuleDetectorTests
         Assert.True(score >= 0.25);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Detects Homoglyph Mixing")]
     public void Score_DetectsHomoglyphMixing()
     {
         var input = new SkillEvaluationInput(
@@ -59,7 +59,7 @@ public sealed class RuleDetectorTests
         Assert.True(score >= 0.2);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Detects Aho Corasick Keyword Matches")]
     public void Score_DetectsAhoCorasickKeywordMatches()
     {
         var input = new SkillEvaluationInput(
@@ -72,7 +72,7 @@ public sealed class RuleDetectorTests
         Assert.True(score >= 0.5);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Handles Unicode Escapes And Nfkc Normalization")]
     public void Score_HandlesUnicodeEscapesAndNfkcNormalization()
     {
         var input = new SkillEvaluationInput(
@@ -85,7 +85,7 @@ public sealed class RuleDetectorTests
         Assert.True(score >= 0.2);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Rules And Chars Disables Malicious Word Group Matches When Configured Off")]
     public void ScoreRulesAndChars_DisablesMaliciousWordGroupMatches_WhenConfiguredOff()
     {
         var input = new SkillEvaluationInput(
@@ -101,7 +101,7 @@ public sealed class RuleDetectorTests
         Assert.Equal(0, score);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Rules And Chars Disables Invisible Character Signals When Configured Off")]
     public void ScoreRulesAndChars_DisablesInvisibleCharacterSignals_WhenConfiguredOff()
     {
         var input = new SkillEvaluationInput(
@@ -117,7 +117,7 @@ public sealed class RuleDetectorTests
         Assert.Equal(0, score);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Detects Chinese Prompt Injection Phrase")]
     public void Score_DetectsChinesePromptInjectionPhrase()
     {
         var input = new SkillEvaluationInput(
@@ -130,7 +130,7 @@ public sealed class RuleDetectorTests
         Assert.True(score >= 0.2);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Detects Chinese Credential Theft Phrase")]
     public void Score_DetectsChineseCredentialTheftPhrase()
     {
         var input = new SkillEvaluationInput(
@@ -143,7 +143,7 @@ public sealed class RuleDetectorTests
         Assert.True(score >= 0.2);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Detects Chinese Jailbreak Phrase")]
     public void Score_DetectsChineseJailbreakPhrase()
     {
         var input = new SkillEvaluationInput(
@@ -156,7 +156,7 @@ public sealed class RuleDetectorTests
         Assert.True(score >= 0.2);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Detects Expanded English Phrases")]
     public void Score_DetectsExpandedEnglishPhrases()
     {
         var input = new SkillEvaluationInput(
@@ -169,7 +169,7 @@ public sealed class RuleDetectorTests
         Assert.True(score >= 0.2);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Detects Access Token Phrase")]
     public void Score_DetectsAccessTokenPhrase()
     {
         var input = new SkillEvaluationInput(
@@ -182,7 +182,7 @@ public sealed class RuleDetectorTests
         Assert.True(score >= 0.3);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Get Default Malicious Phrase File Path Uses Settings Yaml Directory")]
     public void GetDefaultMaliciousPhraseFilePath_UsesSettingsYamlDirectory()
     {
         var settingsPath = new SettingsYamlStore().FilePath;
@@ -193,7 +193,7 @@ public sealed class RuleDetectorTests
         Assert.Equal(expected, actual);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Load Malicious Phrases Ignores Comments Whitespace And Duplicates")]
     public void LoadMaliciousPhrases_IgnoresCommentsWhitespaceAndDuplicates()
     {
         var tempFile = Path.GetTempFileName();
@@ -214,7 +214,7 @@ public sealed class RuleDetectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Load Malicious Phrases Creates Default File When Missing")]
     public void LoadMaliciousPhrases_CreatesDefaultFile_WhenMissing()
     {
         var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -238,7 +238,7 @@ public sealed class RuleDetectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Get Default Dangerous Pattern File Path Uses Settings Yaml Directory")]
     public void GetDefaultDangerousPatternFilePath_UsesSettingsYamlDirectory()
     {
         var settingsPath = new SettingsYamlStore().FilePath;
@@ -249,7 +249,7 @@ public sealed class RuleDetectorTests
         Assert.Equal(expected, actual);
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Load Dangerous Patterns Ignores Comments Duplicates And Invalid Regex")]
     public void LoadDangerousPatterns_IgnoresCommentsDuplicatesAndInvalidRegex()
     {
         var tempFile = Path.GetTempFileName();
@@ -270,7 +270,7 @@ public sealed class RuleDetectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Load Dangerous Patterns Creates Default File When Missing")]
     public void LoadDangerousPatterns_CreatesDefaultFile_WhenMissing()
     {
         var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -294,7 +294,7 @@ public sealed class RuleDetectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "規則偵測器測試：Score Regex Signals Uses External Dangerous Patterns")]
     public void ScoreRegexSignals_UsesExternalDangerousPatterns()
     {
         var tempFile = Path.GetTempFileName();
@@ -315,3 +315,5 @@ public sealed class RuleDetectorTests
         }
     }
 }
+
+

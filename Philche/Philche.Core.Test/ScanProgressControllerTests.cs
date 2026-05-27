@@ -9,7 +9,7 @@ namespace Philche.Core.Test;
 
 public sealed class ScanProgressControllerTests
 {
-    [Fact]
+    [Fact(DisplayName = "掃描進度控制器測試：Apply Progress Tracks Files And Progress Status")]
     public void ApplyProgress_TracksFilesAndProgressStatus()
     {
         var controller = new ScanProgressController(action => action());
@@ -26,7 +26,7 @@ public sealed class ScanProgressControllerTests
         Assert.Equal(@"C:\skills\a.py", controller.Files[0].FilePath);
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描進度控制器測試：Apply Snapshot Restores Existing Scan State")]
     public void ApplySnapshot_RestoresExistingScanState()
     {
         var controller = new ScanProgressController(action => action());
@@ -43,7 +43,7 @@ public sealed class ScanProgressControllerTests
         Assert.Equal(2, controller.Files.Count);
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描進度控制器測試：Apply Progress For Started And Completed Transitions Updates Visibility And Status")]
     public void ApplyProgress_ForStartedAndCompletedTransitions_UpdatesVisibilityAndStatus()
     {
         var controller = new ScanProgressController(action => action());
@@ -61,7 +61,7 @@ public sealed class ScanProgressControllerTests
         Assert.Equal("掃描完成", controller.StatusText);
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描進度控制器測試：Attach Scheduler Restores Scheduler Snapshot For Late Subscribers")]
     public async Task AttachScheduler_RestoresSchedulerSnapshotForLateSubscribers()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-progress-{Guid.NewGuid():N}.db");
@@ -119,7 +119,7 @@ public sealed class ScanProgressControllerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描進度控制器測試：Toggle Pause Resume Synchronizes With Scheduler State")]
     public async Task TogglePauseResume_SynchronizesWithSchedulerState()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-progress-toggle-{Guid.NewGuid():N}.db");
@@ -161,3 +161,5 @@ public sealed class ScanProgressControllerTests
         }
     }
 }
+
+

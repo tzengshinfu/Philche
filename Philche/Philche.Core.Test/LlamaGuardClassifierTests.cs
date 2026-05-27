@@ -6,7 +6,7 @@ namespace Philche.Core.Test;
 
 public sealed class LlamaGuardClassifierTests
 {
-    [Fact]
+    [Fact(DisplayName = "Llama Guard 分類器測試：Score Async Falls Back To Keyword Stub When No Model Provider")]
     public async Task ScoreAsync_FallsBackToKeywordStub_WhenNoModelProvider()
     {
         var classifier = new LlamaGuardClassifier(modelProvider: null);
@@ -20,7 +20,7 @@ public sealed class LlamaGuardClassifierTests
         Assert.True(score > 0);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Llama Guard 分類器測試：Score Async Falls Back To Keyword Stub When Model Unavailable")]
     public async Task ScoreAsync_FallsBackToKeywordStub_WhenModelUnavailable()
     {
         var classifier = new LlamaGuardClassifier(new FakeUnavailableModelProvider());
@@ -34,7 +34,7 @@ public sealed class LlamaGuardClassifierTests
         Assert.True(score > 0);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Llama Guard 分類器測試：Score Async Returns Zero When Content Is Empty")]
     public async Task ScoreAsync_ReturnsZero_WhenContentIsEmpty()
     {
         var classifier = new LlamaGuardClassifier(modelProvider: null);
@@ -47,34 +47,34 @@ public sealed class LlamaGuardClassifierTests
         Assert.Equal(0.0, score);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Llama Guard 分類器測試：Parse Guard Output Safe Returns Zero")]
     public void ParseGuardOutput_Safe_ReturnsZero()
     {
         Assert.Equal(0.0, LlamaGuardClassifier.ParseGuardOutput("safe"));
         Assert.Equal(0.0, LlamaGuardClassifier.ParseGuardOutput("Safe\n"));
     }
 
-    [Fact]
+    [Fact(DisplayName = "Llama Guard 分類器測試：Parse Guard Output Unsafe With Categories Returns Score")]
     public void ParseGuardOutput_UnsafeWithCategories_ReturnsScore()
     {
         Assert.Equal(0.5, LlamaGuardClassifier.ParseGuardOutput("unsafe\nS2, S7"));
         Assert.Equal(0.75, LlamaGuardClassifier.ParseGuardOutput("unsafe\nS2, S7, S14"));
     }
 
-    [Fact]
+    [Fact(DisplayName = "Llama Guard 分類器測試：Parse Guard Output Unsafe Without Categories Returns 06")]
     public void ParseGuardOutput_UnsafeWithoutCategories_Returns06()
     {
         Assert.Equal(0.6, LlamaGuardClassifier.ParseGuardOutput("unsafe"));
     }
 
-    [Fact]
+    [Fact(DisplayName = "Llama Guard 分類器測試：Parse Guard Output Unparseable Returns Zero")]
     public void ParseGuardOutput_Unparseable_ReturnsZero()
     {
         Assert.Equal(0.0, LlamaGuardClassifier.ParseGuardOutput("gibberish"));
         Assert.Equal(0.0, LlamaGuardClassifier.ParseGuardOutput(""));
     }
 
-    [Fact]
+    [Fact(DisplayName = "Llama Guard 分類器測試：Parse Guard Output Unsafe Many Categories Caps At One")]
     public void ParseGuardOutput_UnsafeManyCategoriesCapsAtOne()
     {
         Assert.Equal(1.0, LlamaGuardClassifier.ParseGuardOutput("unsafe\nS1, S2, S3, S4, S5"));
@@ -88,3 +88,5 @@ public sealed class LlamaGuardClassifierTests
         public void Dispose() { }
     }
 }
+
+

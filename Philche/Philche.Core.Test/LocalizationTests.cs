@@ -4,7 +4,7 @@ namespace Philche.Core.Test;
 
 public sealed class LocalizationTests
 {
-    [Fact]
+    [Fact(DisplayName = "在地化測試：Locale Resources Should Have Key Parity Between Zh Tw And En Us")]
     public void LocaleResources_ShouldHaveKeyParityBetweenZhTwAndEnUs()
     {
         var tempPath = Path.Combine(Path.GetTempPath(), $"philche-locale-{Guid.NewGuid():N}.txt");
@@ -25,7 +25,7 @@ public sealed class LocalizationTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "在地化測試：Get For Locale When Unsupported Locale Uses Fallback Behavior")]
     public void GetForLocale_WhenUnsupportedLocale_UsesFallbackBehavior()
     {
         var tempPath = Path.Combine(Path.GetTempPath(), $"philche-locale-{Guid.NewGuid():N}.txt");
@@ -45,7 +45,7 @@ public sealed class LocalizationTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "在地化測試：Set Locale Should Persist Preference And Load On Next Startup")]
     public void SetLocale_ShouldPersistPreferenceAndLoadOnNextStartup()
     {
         var tempPath = Path.Combine(Path.GetTempPath(), $"philche-locale-{Guid.NewGuid():N}.txt");
@@ -66,3 +66,5 @@ public sealed class LocalizationTests
         }
     }
 }
+
+

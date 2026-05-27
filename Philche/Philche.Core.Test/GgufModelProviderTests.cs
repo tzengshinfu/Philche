@@ -4,7 +4,7 @@ namespace Philche.Core.Test;
 
 public sealed class GgufModelProviderTests
 {
-    [Fact]
+    [Fact(DisplayName = "GGUF 模型提供者測試：Is Available Returns False When Path Is Empty")]
     public void IsAvailable_ReturnsFalse_WhenPathIsEmpty()
     {
         var provider = new GgufModelProvider(string.Empty);
@@ -13,7 +13,7 @@ public sealed class GgufModelProviderTests
         Assert.Null(provider.GetWeights());
     }
 
-    [Fact]
+    [Fact(DisplayName = "GGUF 模型提供者測試：Is Available Returns False When File Does Not Exist")]
     public void IsAvailable_ReturnsFalse_WhenFileDoesNotExist()
     {
         var provider = new GgufModelProvider("/nonexistent/model.gguf");
@@ -22,7 +22,7 @@ public sealed class GgufModelProviderTests
         Assert.Null(provider.GetWeights());
     }
 
-    [Fact]
+    [Fact(DisplayName = "GGUF 模型提供者測試：Get Weights Returns Null When File Does Not Exist")]
     public void GetWeights_ReturnsNull_WhenFileDoesNotExist()
     {
         var provider = new GgufModelProvider("/nonexistent/model.gguf");
@@ -34,7 +34,7 @@ public sealed class GgufModelProviderTests
         Assert.Null(weights2);
     }
 
-    [Fact]
+    [Fact(DisplayName = "GGUF 模型提供者測試：Get Weights Does Not Mark Permanent Failure When File Does Not Exist")]
     public void GetWeights_DoesNotMarkPermanentFailure_WhenFileDoesNotExist()
     {
         var provider = new GgufModelProvider("/nonexistent/model.gguf");
@@ -47,7 +47,7 @@ public sealed class GgufModelProviderTests
         Assert.Null(provider.LastLoadError);
     }
 
-    [Fact]
+    [Fact(DisplayName = "GGUF 模型提供者測試：Get Weights Retries When File Appears Later")]
     public void GetWeights_Retries_WhenFileAppearsLater()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-model-{Guid.NewGuid():N}");
@@ -77,7 +77,7 @@ public sealed class GgufModelProviderTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "GGUF 模型提供者測試：Get Weights Marks Permanent Failure When Load Throws")]
     public void GetWeights_MarksPermanentFailure_WhenLoadThrows()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-model-{Guid.NewGuid():N}");
@@ -105,7 +105,7 @@ public sealed class GgufModelProviderTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "GGUF 模型提供者測試：Dispose Does Not Throw When No Model Loaded")]
     public void Dispose_DoesNotThrow_WhenNoModelLoaded()
     {
         var provider = new GgufModelProvider(string.Empty);
@@ -114,7 +114,7 @@ public sealed class GgufModelProviderTests
         Assert.Null(provider.GetWeights());
     }
 
-    [Fact]
+    [Fact(DisplayName = "GGUF 模型提供者測試：Dispose Can Be Called Multiple Times")]
     public void Dispose_CanBeCalledMultipleTimes()
     {
         var provider = new GgufModelProvider(string.Empty);
@@ -124,3 +124,5 @@ public sealed class GgufModelProviderTests
         Assert.Null(provider.GetWeights());
     }
 }
+
+

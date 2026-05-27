@@ -4,7 +4,7 @@ namespace Philche.Core.Test;
 
 public sealed class SettingsChangeNotifierTests
 {
-    [Fact]
+    [Fact(DisplayName = "設定變更通知測試：Raises Single Event When File Changes Rapidly")]
     public async Task RaisesSingleEvent_WhenFileChangesRapidly()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-watch-{Guid.NewGuid():N}");
@@ -45,7 +45,7 @@ public sealed class SettingsChangeNotifierTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "設定變更通知測試：Initialization Failure Disables Monitoring And Logs Warning")]
     public void InitializationFailure_DisablesMonitoring_AndLogsWarning()
     {
         string? warning = null;
@@ -60,3 +60,5 @@ public sealed class SettingsChangeNotifierTests
         Assert.False(string.IsNullOrWhiteSpace(warning));
     }
 }
+
+

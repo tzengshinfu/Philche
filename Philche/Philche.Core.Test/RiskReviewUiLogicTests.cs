@@ -6,7 +6,7 @@ namespace Philche.Core.Test;
 
 public sealed class RiskReviewUiLogicTests
 {
-    [Fact]
+    [Fact(DisplayName = "風險檢視 UI 邏輯測試：Resolve Risk Level Uses Skills Risk Level When Present")]
     public void ResolveRiskLevel_UsesSkillsRiskLevelWhenPresent()
     {
         var finding = new Finding
@@ -24,7 +24,7 @@ public sealed class RiskReviewUiLogicTests
         Assert.Equal("MEDIUM", level);
     }
 
-    [Theory]
+    [Theory(DisplayName = "風險檢視 UI 邏輯測試：Resolve Risk Level Maps Severity To Normalized Risk")]
     [InlineData("CRITICAL", "HIGH")]
     [InlineData("HIGH", "HIGH")]
     [InlineData("MEDIUM", "MEDIUM")]
@@ -47,7 +47,7 @@ public sealed class RiskReviewUiLogicTests
         Assert.Equal(expected, level);
     }
 
-    [Fact]
+    [Fact(DisplayName = "風險檢視 UI 邏輯測試：Resolve Guidance Key Returns Expected Key For Risk")]
     public void ResolveGuidanceKey_ReturnsExpectedKeyForRisk()
     {
         var highFinding = new Finding
@@ -77,7 +77,7 @@ public sealed class RiskReviewUiLogicTests
         Assert.Equal("guidance.low", RiskReviewUiLogic.ResolveGuidanceKey(lowFinding));
     }
 
-    [Fact]
+    [Fact(DisplayName = "風險檢視 UI 邏輯測試：Build New Target Notification Formats None Single And Multiple")]
     public void BuildNewTargetNotification_FormatsNoneSingleAndMultiple()
     {
         var dictionary = new Dictionary<string, string>
@@ -98,10 +98,12 @@ public sealed class RiskReviewUiLogicTests
         Assert.Equal("multi 6: Ubuntu, Debian, api, mysql, redis", multiple);
     }
 
-    [Fact]
+    [Fact(DisplayName = "風險檢視 UI 邏輯測試：Has Any Selected Targets Returns Expected State")]
     public void HasAnySelectedTargets_ReturnsExpectedState()
     {
         Assert.False(RiskReviewUiLogic.HasAnySelectedTargets([false, false, false]));
         Assert.True(RiskReviewUiLogic.HasAnySelectedTargets([false, true, false]));
     }
 }
+
+

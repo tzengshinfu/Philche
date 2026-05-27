@@ -7,7 +7,7 @@ namespace Philche.Core.Test;
 
 public sealed class EvaluatorFactoryTests
 {
-    [Fact]
+    [Fact(DisplayName = "評估器工廠測試：Build Uses Model Paths From Settings Store")]
     public void Build_UsesModelPathsFromSettingsStore()
     {
         var store = new FakeSettingsStore
@@ -31,7 +31,7 @@ public sealed class EvaluatorFactoryTests
         Assert.True(snapshot.CveDegraded);
     }
 
-    [Fact]
+    [Fact(DisplayName = "評估器工廠測試：Dispose Is Idempotent And Marks Snapshot Disposed")]
     public void Dispose_IsIdempotent_AndMarksSnapshotDisposed()
     {
         var store = new FakeSettingsStore
@@ -54,7 +54,7 @@ public sealed class EvaluatorFactoryTests
         Assert.Null(snapshot.CveProvider?.GetWeights());
     }
 
-    [Fact]
+    [Fact(DisplayName = "評估器工廠測試：Build Uses Keyword Fallback When Guard Model Scan Disabled")]
     public async Task Build_UsesKeywordFallback_WhenGuardModelScanDisabled()
     {
         var store = new FakeSettingsStore
@@ -88,7 +88,7 @@ public sealed class EvaluatorFactoryTests
         Assert.Contains(result.Evidence, x => x.Detector == "guard");
     }
 
-    [Fact]
+    [Fact(DisplayName = "評估器工廠測試：Build Disables Regex Stage When Configured Off")]
     public async Task Build_DisablesRegexStage_WhenConfiguredOff()
     {
         var store = new FakeSettingsStore
@@ -114,7 +114,7 @@ public sealed class EvaluatorFactoryTests
         Assert.Contains(result.Evidence, x => x.Detector == "regex" && x.Message == "Detector disabled by feature flag");
     }
 
-    [Fact]
+    [Fact(DisplayName = "評估器工廠測試：Build Enables Semantic Stage When Configured On")]
     public async Task Build_EnablesSemanticStage_WhenConfiguredOn()
     {
         var store = new FakeSettingsStore
@@ -144,7 +144,7 @@ public sealed class EvaluatorFactoryTests
         Assert.Contains(result.Evidence, x => x.Detector == "semantic" && x.Score > 0);
     }
 
-    [Fact]
+    [Fact(DisplayName = "評估器工廠測試：Build Enables Virus Total Skill Url Stage When Configured On")]
     public async Task Build_EnablesVirusTotalSkillUrlStage_WhenConfiguredOn()
     {
         var store = new FakeSettingsStore
@@ -174,7 +174,7 @@ public sealed class EvaluatorFactoryTests
         Assert.Contains(result.Evidence, x => x.Detector == "virustotal-url");
     }
 
-    [Fact]
+    [Fact(DisplayName = "評估器工廠測試：Build Logs Warning When All Scan Methods Disabled")]
     public void Build_LogsWarning_WhenAllScanMethodsDisabled()
     {
         var warnings = new List<string>();
@@ -206,7 +206,7 @@ public sealed class EvaluatorFactoryTests
         Assert.False(snapshot.CveCorrelationEnabled);
     }
 
-    [Fact]
+    [Fact(DisplayName = "評估器工廠測試：Build Reflects Updated Scanning Config On Subsequent Build")]
     public void Build_ReflectsUpdatedScanningConfig_OnSubsequentBuild()
     {
         var store = new FakeSettingsStore
@@ -293,3 +293,5 @@ public sealed class EvaluatorFactoryTests
         }
     }
 }
+
+

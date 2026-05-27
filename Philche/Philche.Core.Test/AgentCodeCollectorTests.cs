@@ -4,7 +4,7 @@ namespace Philche.Core.Test;
 
 public sealed class AgentCodeCollectorTests
 {
-    [Fact]
+    [Fact(DisplayName = "代理程式碼收集測試：Scan Directories Async Skips Non Existent Directory")]
     public async Task ScanDirectoriesAsync_SkipsNonExistentDirectory()
     {
         var collector = new AgentCodeCollector();
@@ -16,7 +16,7 @@ public sealed class AgentCodeCollectorTests
         Assert.Empty(result.FileResults);
     }
 
-    [Fact]
+    [Fact(DisplayName = "代理程式碼收集測試：Scan Directories Async Filters Extensions")]
     public async Task ScanDirectoriesAsync_FiltersExtensions()
     {
         var tempDir = CreateTempDirectory();
@@ -37,7 +37,7 @@ public sealed class AgentCodeCollectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "代理程式碼收集測試：Scan Directories Async Skips Blacklisted Directories")]
     public async Task ScanDirectoriesAsync_SkipsBlacklistedDirectories()
     {
         var tempDir = CreateTempDirectory();
@@ -63,7 +63,7 @@ public sealed class AgentCodeCollectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "代理程式碼收集測試：Scan Directories Async Detects Findings")]
     public async Task ScanDirectoriesAsync_DetectsFindings()
     {
         var tempDir = CreateTempDirectory();
@@ -84,7 +84,7 @@ public sealed class AgentCodeCollectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "代理程式碼收集測試：Scan Directories Async Skips Oversized Files")]
     public async Task ScanDirectoriesAsync_SkipsOversizedFiles()
     {
         var tempDir = CreateTempDirectory();
@@ -107,7 +107,7 @@ public sealed class AgentCodeCollectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "代理程式碼收集測試：Scan Directories Async Cancellation Is Respected")]
     public async Task ScanDirectoriesAsync_CancellationIsRespected()
     {
         var tempDir = CreateTempDirectory();
@@ -131,7 +131,7 @@ public sealed class AgentCodeCollectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "代理程式碼收集測試：Scan Files Async Scans Specific Files Only")]
     public async Task ScanFilesAsync_ScansSpecificFilesOnly()
     {
         var tempDir = CreateTempDirectory();
@@ -154,7 +154,7 @@ public sealed class AgentCodeCollectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "代理程式碼收集測試：Scan Files Async Skips Deleted File")]
     public async Task ScanFilesAsync_SkipsDeletedFile()
     {
         var tempDir = CreateTempDirectory();
@@ -176,7 +176,7 @@ public sealed class AgentCodeCollectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "代理程式碼收集測試：Scan Files Async Skips Oversized File")]
     public async Task ScanFilesAsync_SkipsOversizedFile()
     {
         var tempDir = CreateTempDirectory();
@@ -196,7 +196,7 @@ public sealed class AgentCodeCollectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "代理程式碼收集測試：Scan Files Async Skips Non Whitelisted Extension")]
     public async Task ScanFilesAsync_SkipsNonWhitelistedExtension()
     {
         var tempDir = CreateTempDirectory();
@@ -216,7 +216,7 @@ public sealed class AgentCodeCollectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "代理程式碼收集測試：Compute Single File Hash Async Changes When File Content Changes")]
     public async Task ComputeSingleFileHashAsync_ChangesWhenFileContentChanges()
     {
         var tempDir = CreateTempDirectory();
@@ -238,7 +238,7 @@ public sealed class AgentCodeCollectorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "代理程式碼收集測試：Compute Single File Hash Async For Missing File Returns Deterministic Marker Hash")]
     public async Task ComputeSingleFileHashAsync_ForMissingFile_ReturnsDeterministicMarkerHash()
     {
         var tempDir = CreateTempDirectory();
@@ -264,3 +264,5 @@ public sealed class AgentCodeCollectorTests
         return path;
     }
 }
+
+

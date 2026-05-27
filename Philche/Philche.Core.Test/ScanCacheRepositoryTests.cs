@@ -5,7 +5,7 @@ namespace Philche.Core.Test;
 
 public sealed class ScanCacheRepositoryTests
 {
-    [Fact]
+    [Fact(DisplayName = "掃描快取存放庫測試：Upsert And Get Async Round Trips Entry")]
     public async Task UpsertAndGetAsync_RoundTripsEntry()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-cache-{Guid.NewGuid():N}.db");
@@ -43,7 +43,7 @@ public sealed class ScanCacheRepositoryTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描快取存放庫測試：Upsert Async On Same Key Updates Entry")]
     public async Task UpsertAsync_OnSameKey_UpdatesEntry()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-cache-{Guid.NewGuid():N}.db");
@@ -86,7 +86,7 @@ public sealed class ScanCacheRepositoryTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描快取存放庫測試：Delete By Scan Type Async Removes Only Requested Type")]
     public async Task DeleteByScanTypeAsync_RemovesOnlyRequestedType()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-cache-{Guid.NewGuid():N}.db");
@@ -129,7 +129,7 @@ public sealed class ScanCacheRepositoryTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描快取存放庫測試：Clear All Async Removes All Entries")]
     public async Task ClearAllAsync_RemovesAllEntries()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-cache-{Guid.NewGuid():N}.db");
@@ -171,7 +171,7 @@ public sealed class ScanCacheRepositoryTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描快取存放庫測試：Upsert And Get Async Round Trips Agent Version")]
     public async Task UpsertAndGetAsync_RoundTripsAgentVersion()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-cache-{Guid.NewGuid():N}.db");
@@ -203,3 +203,5 @@ public sealed class ScanCacheRepositoryTests
         }
     }
 }
+
+

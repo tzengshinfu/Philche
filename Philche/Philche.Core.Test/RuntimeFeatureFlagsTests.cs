@@ -4,14 +4,14 @@ namespace Philche.Core.Test;
 
 public sealed class RuntimeFeatureFlagsTests
 {
-    [Fact]
+    [Fact(DisplayName = "執行期功能旗標測試：Defaults Should Disable Automatic Known Agent Catalog Refresh")]
     public void Defaults_ShouldDisableAutomaticKnownAgentCatalogRefresh()
     {
         var flags = new RuntimeFeatureFlags();
         Assert.False(flags.EnableAutomaticKnownAgentCatalogRefresh);
     }
 
-    [Fact]
+    [Fact(DisplayName = "執行期功能旗標測試：Manual Policy Should Allow Explicit Override For Non Mvp Scenarios")]
     public void ManualPolicy_ShouldAllowExplicitOverrideForNonMvpScenarios()
     {
         var flags = new RuntimeFeatureFlags
@@ -22,7 +22,7 @@ public sealed class RuntimeFeatureFlagsTests
         Assert.True(flags.EnableAutomaticKnownAgentCatalogRefresh);
     }
 
-    [Fact]
+    [Fact(DisplayName = "執行期功能旗標測試：Defaults Should Enable Guard Regex And Yara Stages")]
     public void Defaults_ShouldEnableGuardRegexAndYaraStages()
     {
         var flags = new RuntimeFeatureFlags();
@@ -36,3 +36,5 @@ public sealed class RuntimeFeatureFlagsTests
         Assert.False(flags.EnableVirusTotalScriptUrlScan);
     }
 }
+
+

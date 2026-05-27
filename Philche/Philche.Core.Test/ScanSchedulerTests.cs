@@ -8,7 +8,7 @@ namespace Philche.Core.Test;
 
 public sealed class ScanSchedulerTests
 {
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Try Run Periodic Async Respects Minimum One Hour Interval")]
     public async Task TryRunPeriodicAsync_RespectsMinimumOneHourInterval()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -49,7 +49,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Try Run Accelerated Async Applies Debounce And Throttle And Merges Reasons")]
     public async Task TryRunAcceleratedAsync_AppliesDebounceAndThrottleAndMergesReasons()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -99,7 +99,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Try Run Accelerated Async Runs Code Scan Executor For Skills Change Reason")]
     public async Task TryRunAcceleratedAsync_RunsCodeScanExecutor_ForSkillsChangeReason()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -144,7 +144,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Try Run Accelerated Async Uses Agent Code Collector When Code Executor Is Null")]
     public async Task TryRunAcceleratedAsync_UsesAgentCodeCollector_WhenCodeExecutorIsNull()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -187,7 +187,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Pause And Resume Control Periodic And Accelerated Eligibility")]
     public async Task PauseAndResume_ControlPeriodicAndAcceleratedEligibility()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -224,7 +224,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Try Run Manual Async Bypasses Debounce And Throttle")]
     public async Task TryRunManualAsync_BypassesDebounceAndThrottle()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -260,7 +260,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Scan Progress Raises Started And Completed Events")]
     public async Task ScanProgress_RaisesStartedAndCompletedEvents()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -298,7 +298,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Try Run Manual Async Skips When Another Full Scan Is Running")]
     public async Task TryRunManualAsync_SkipsWhenAnotherFullScanIsRunning()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -340,7 +340,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Try Run Scoped Async Can Run In Parallel With Full Scan")]
     public async Task TryRunScopedAsync_CanRunInParallelWithFullScan()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -396,7 +396,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Stop All Scans Cancels Running Full Scan")]
     public async Task StopAllScans_CancelsRunningFullScan()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -436,7 +436,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Full Scan With Collector Publishes Per File Progress Events")]
     public async Task FullScan_WithCollector_PublishesPerFileProgressEvents()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -483,7 +483,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Try Run Accelerated Async Rule Set Version Changed Clears Code Cache")]
     public async Task TryRunAcceleratedAsync_RuleSetVersionChanged_ClearsCodeCache()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -526,7 +526,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Try Run Accelerated Async Agent Version Changed Clears Posture Cache")]
     public async Task TryRunAcceleratedAsync_AgentVersionChanged_ClearsPostureCache()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -570,7 +570,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Try Run Manual Async Bypasses Code Cache And Refreshes Timestamp")]
     public async Task TryRunManualAsync_BypassesCodeCacheAndRefreshesTimestamp()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -645,7 +645,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Try Run Periodic Async Skips Trusted Skills Paths For Prompt And Code Scans")]
     public async Task TryRunPeriodicAsync_SkipsTrustedSkillsPathsForPromptAndCodeScans()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -708,7 +708,7 @@ public sealed class ScanSchedulerTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "掃描排程器測試：Try Run Periodic Async Skips Code Scan When All Skills Paths Are Trusted")]
     public async Task TryRunPeriodicAsync_SkipsCodeScanWhenAllSkillsPathsAreTrusted()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-scheduler-{Guid.NewGuid():N}.db");
@@ -770,3 +770,5 @@ public sealed class ScanSchedulerTests
         };
     }
 }
+
+

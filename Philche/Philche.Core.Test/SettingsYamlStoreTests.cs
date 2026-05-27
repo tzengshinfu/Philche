@@ -7,7 +7,7 @@ namespace Philche.Core.Test;
 
 public sealed class SettingsYamlStoreTests
 {
-    [Fact]
+    [Fact(DisplayName = "設定 Yaml 儲存測試：Load Catalog When File Missing Bootstraps Default Catalog")]
     public void LoadCatalog_WhenFileMissing_BootstrapsDefaultCatalog()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
@@ -31,7 +31,7 @@ public sealed class SettingsYamlStoreTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "設定 Yaml 儲存測試：Save Catalog Round Trips Custom Entries")]
     public void SaveCatalog_RoundTripsCustomEntries()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
@@ -70,7 +70,7 @@ public sealed class SettingsYamlStoreTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "設定 Yaml 儲存測試：Save Catalog Preserves Existing Model Paths")]
     public void SaveCatalog_PreservesExistingModelPaths()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
@@ -112,7 +112,7 @@ public sealed class SettingsYamlStoreTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "設定 Yaml 儲存測試：Load Model Paths Uses Default Model Name When Missing")]
     public void LoadModelPaths_UsesDefaultModelNameWhenMissing()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
@@ -137,7 +137,7 @@ public sealed class SettingsYamlStoreTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "設定 Yaml 儲存測試：Load And Save Scanning Config Round Trips Toggle Flags")]
     public void LoadAndSaveScanningConfig_RoundTripsToggleFlags()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
@@ -186,7 +186,7 @@ public sealed class SettingsYamlStoreTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "設定 Yaml 儲存測試：Load Scanning Config Uses Virus Total Defaults When Missing")]
     public void LoadScanningConfig_UsesVirusTotalDefaultsWhenMissing()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
@@ -213,7 +213,7 @@ public sealed class SettingsYamlStoreTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "設定 Yaml 儲存測試：Load Scheduler Config Uses Defaults When Missing")]
     public void LoadSchedulerConfig_UsesDefaultsWhenMissing()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
@@ -240,7 +240,7 @@ public sealed class SettingsYamlStoreTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "設定 Yaml 儲存測試：Save Scheduler Config Round Trips Values")]
     public void SaveSchedulerConfig_RoundTripsValues()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
@@ -275,7 +275,7 @@ public sealed class SettingsYamlStoreTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "設定 Yaml 儲存測試：Load Catalog Accepts Legacy Skills Path String List")]
     public void LoadCatalog_AcceptsLegacySkillsPathStringList()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
@@ -313,7 +313,7 @@ public sealed class SettingsYamlStoreTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "設定 Yaml 儲存測試：Load Catalog Accepts Structured Skills Path Entries")]
     public void LoadCatalog_AcceptsStructuredSkillsPathEntries()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
@@ -363,7 +363,7 @@ public sealed class SettingsYamlStoreTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "設定 Yaml 儲存測試：Save Catalog Round Trips Trusted Skills Path Entries")]
     public void SaveCatalog_RoundTripsTrustedSkillsPathEntries()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
@@ -413,7 +413,7 @@ public sealed class SettingsYamlStoreTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "設定 Yaml 儲存測試：Save Shell Context Menu Config Round Trips Values")]
     public void SaveShellContextMenuConfig_RoundTripsValues()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
@@ -442,3 +442,5 @@ public sealed class SettingsYamlStoreTests
         }
     }
 }
+
+

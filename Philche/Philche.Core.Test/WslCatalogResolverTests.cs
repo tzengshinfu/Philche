@@ -7,7 +7,7 @@ namespace Philche.Core.Test;
 
 public sealed class WslCatalogResolverTests(ITestOutputHelper output)
 {
-    [Fact]
+    [Fact(DisplayName = "WSL 目錄解析測試：Expand Async Generates Existing Windows And Wsl Paths As Default Trusted")]
     public async Task ExpandAsync_GeneratesExistingWindowsAndWslPathsAsDefaultTrusted()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), $"philche-wsl-{Guid.NewGuid():N}");
@@ -60,7 +60,7 @@ public sealed class WslCatalogResolverTests(ITestOutputHelper output)
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "WSL 目錄解析測試：Expand Async Preserves Existing Trusted Flag On Duplicate Path")]
     public async Task ExpandAsync_PreservesExistingTrustedFlagOnDuplicatePath()
     {
         var tempRoot = Path.Combine(Path.GetTempPath(), $"philche-wsl-{Guid.NewGuid():N}");
@@ -100,7 +100,7 @@ public sealed class WslCatalogResolverTests(ITestOutputHelper output)
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "WSL 目錄解析測試：Integration Can Read Demo Local Skill From Wsl Path")]
     public async Task Integration_CanReadDemoLocalSkillFromWslPath()
     {
         const string expectedSkillFile = @"\\wsl.localhost\Ubuntu-22.04\home\y1938\.openclaw\workspace\skills\demo-local-skill\SKILL.md";
@@ -145,3 +145,5 @@ public sealed class WslCatalogResolverTests(ITestOutputHelper output)
         }
     }
 }
+
+

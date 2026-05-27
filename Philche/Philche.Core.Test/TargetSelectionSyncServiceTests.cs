@@ -8,7 +8,7 @@ namespace Philche.Core.Test;
 
 public sealed class TargetSelectionSyncServiceTests
 {
-    [Fact]
+    [Fact(DisplayName = "目標選取同步服務測試：Sync Async New Targets Default To Unselected And Existing Selection Is Preserved")]
     public async Task SyncAsync_NewTargetsDefaultToUnselected_AndExistingSelectionIsPreserved()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-sync-{Guid.NewGuid():N}.db");
@@ -55,7 +55,7 @@ public sealed class TargetSelectionSyncServiceTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "目標選取同步服務測試：Filter Known Executables Ignores Unknown Candidates")]
     public void FilterKnownExecutables_IgnoresUnknownCandidates()
     {
         var classifier = new KnownAgentClassifier([
@@ -78,7 +78,7 @@ public sealed class TargetSelectionSyncServiceTests
         Assert.Equal(1, unknownIgnored);
     }
 
-    [Fact]
+    [Fact(DisplayName = "目標選取同步服務測試：Sync Async Respects Wsl Feature Flag")]
     public async Task SyncAsync_RespectsWslFeatureFlag()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-sync-{Guid.NewGuid():N}.db");
@@ -113,3 +113,5 @@ public sealed class TargetSelectionSyncServiceTests
             Task.FromResult(distros);
     }
 }
+
+

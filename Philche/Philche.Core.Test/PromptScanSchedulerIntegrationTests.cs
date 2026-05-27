@@ -9,7 +9,7 @@ namespace Philche.Core.Test;
 
 public sealed class PromptScanSchedulerIntegrationTests
 {
-    [Fact]
+    [Fact(DisplayName = "提示掃描排程整合測試：Try Run Manual Async Persists Scan Run And Prompt Finding")]
     public async Task TryRunManualAsync_PersistsScanRunAndPromptFinding()
     {
         var tempDir = CreateTempDirectory();
@@ -72,7 +72,7 @@ public sealed class PromptScanSchedulerIntegrationTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "提示掃描排程整合測試：Try Run Manual Async Tracks Warnings When Prompt Scan Runs In Degraded Mode")]
     public async Task TryRunManualAsync_TracksWarnings_WhenPromptScanRunsInDegradedMode()
     {
         var tempDir = CreateTempDirectory();
@@ -203,3 +203,5 @@ public sealed class PromptScanSchedulerIntegrationTests
         };
     }
 }
+
+

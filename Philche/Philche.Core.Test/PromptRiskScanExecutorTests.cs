@@ -9,7 +9,7 @@ namespace Philche.Core.Test;
 
 public sealed class PromptRiskScanExecutorTests
 {
-    [Fact]
+    [Fact(DisplayName = "提示風險掃描執行器測試：Execute Async Persists Skill Finding For Medium Or Higher Risk Prompt")]
     public async Task ExecuteAsync_PersistsSkillFinding_ForMediumOrHigherRiskPrompt()
     {
         var tempDir = CreateTempDirectory();
@@ -43,7 +43,7 @@ public sealed class PromptRiskScanExecutorTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "提示風險掃描執行器測試：Execute Async Removes Existing Skill Finding When Prompt Becomes Low Risk")]
     public async Task ExecuteAsync_RemovesExistingSkillFinding_WhenPromptBecomesLowRisk()
     {
         var tempDir = CreateTempDirectory();
@@ -151,3 +151,5 @@ public sealed class PromptRiskScanExecutorTests
         }
     }
 }
+
+

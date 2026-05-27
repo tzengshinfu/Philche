@@ -6,7 +6,7 @@ namespace Philche.Core.Test;
 
 public sealed class DataStoreTests
 {
-    [Fact]
+    [Fact(DisplayName = "資料儲存測試：Migration Runner Creates Required Tables")]
     public async Task MigrationRunner_CreatesRequiredTables()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-test-{Guid.NewGuid():N}.db");
@@ -37,7 +37,7 @@ public sealed class DataStoreTests
         }
     }
 
-    [Fact]
+    [Fact(DisplayName = "資料儲存測試：Repositories Upsert And Read Normalized Finding")]
     public async Task Repositories_UpsertAndReadNormalizedFinding()
     {
         var dbPath = Path.Combine(Path.GetTempPath(), $"philche-test-{Guid.NewGuid():N}.db");
@@ -93,3 +93,5 @@ public sealed class DataStoreTests
         }
     }
 }
+
+

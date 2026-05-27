@@ -6,7 +6,7 @@ namespace Philche.Core.Test;
 
 public sealed class LlamaCveSummarySimplifierTests
 {
-    [Fact]
+    [Fact(DisplayName = "Llama CVE 摘要簡化測試：Simplify Async Falls Back To Regex When No Model Provider")]
     public async Task SimplifyAsync_FallsBackToRegex_WhenNoModelProvider()
     {
         var simplifier = new LlamaCveSummarySimplifier(modelProvider: null);
@@ -18,7 +18,7 @@ public sealed class LlamaCveSummarySimplifierTests
         Assert.StartsWith("CVE-2024-1234:", result);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Llama CVE 摘要簡化測試：Simplify Async Falls Back To Regex When Model Unavailable")]
     public async Task SimplifyAsync_FallsBackToRegex_WhenModelUnavailable()
     {
         var simplifier = new LlamaCveSummarySimplifier(new FakeUnavailableModelProvider());
@@ -30,7 +30,7 @@ public sealed class LlamaCveSummarySimplifierTests
         Assert.StartsWith("CVE-2024-5678:", result);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Llama CVE 摘要簡化測試：Simplify Async Returns Null When Summary Is Empty")]
     public async Task SimplifyAsync_ReturnsNull_WhenSummaryIsEmpty()
     {
         var simplifier = new LlamaCveSummarySimplifier(modelProvider: null);
@@ -40,7 +40,7 @@ public sealed class LlamaCveSummarySimplifierTests
         Assert.Null(result);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Llama CVE 摘要簡化測試：Simplify With Regex Fallback Extracts First Sentence")]
     public void SimplifyWithRegexFallback_ExtractsFirstSentence()
     {
         var result = LlamaCveSummarySimplifier.SimplifyWithRegexFallback(
@@ -50,7 +50,7 @@ public sealed class LlamaCveSummarySimplifierTests
         Assert.Equal("CVE-2024-9999: Buffer overflow in libxml2 before 2.9.12", result);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Llama CVE 摘要簡化測試：Simplify With Regex Fallback Handles No Sentence End")]
     public void SimplifyWithRegexFallback_HandlesNoSentenceEnd()
     {
         var result = LlamaCveSummarySimplifier.SimplifyWithRegexFallback(
@@ -68,3 +68,5 @@ public sealed class LlamaCveSummarySimplifierTests
         public void Dispose() { }
     }
 }
+
+
