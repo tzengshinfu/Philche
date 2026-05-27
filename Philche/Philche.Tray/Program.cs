@@ -64,20 +64,7 @@ internal static class Program
         appMutex = new Mutex(true, SingleInstanceMutexName, out var createdNew);
         if (!createdNew)
         {
-            if (ScanPathsOnStartup.Count > 0)
-            {
-                ScanQueueIpc.EnqueuePaths(ScanPathsOnStartup);
-                ScanQueueIpc.Signal();
-                return;
-            }
-
-            if (OpenModelsOnStartup)
-            {
-                SignalOpenModels();
-                return;
-            }
-
-            ToastNotifier.TryShowAlreadyRunning();
+            HandleExistingInstanceActivation();
             return;
         }
 
@@ -253,6 +240,30 @@ internal static class Program
             EnableRules: HasFlag(args, "--rules"),
             EnableRegex: HasFlag(args, "--regex"),
             VirusTotalApiKey: ExtractOptionValue(args, "--virustotal-api-key"));
+    }
+
+    internal static void HandleExistingInstanceActivation()
+    {
+        if (ScanPathsOnStartup.Count > 0)
+        {
+            ScanQueueIpc.EnqueuePaths(ScanPathsOnStartup);
+            ScanQueueIpc.Signal();
+            return;
+        }
+
+        if (OpenModelsOnStartup)
+        {
+            SignalOpenModels();
+            return;
+        }
+
+        ToastNotifier.TryShowAlreadyRunning();
+    }
+
+    internal static void SetStartupActivationForTest(bool openModelsOnStartup, IReadOnlyList<string>? scanPathsOnStartup = null)
+    {
+        OpenModelsOnStartup = openModelsOnStartup;
+        ScanPathsOnStartup = scanPathsOnStartup ?? [];
     }
 
     private static bool HasFlag(string[] args, string flag)

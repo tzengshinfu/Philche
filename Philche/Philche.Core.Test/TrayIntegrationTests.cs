@@ -192,6 +192,29 @@ public sealed class TrayIntegrationTests
         }
     }
 
+    [Fact(DisplayName = "系統匣整合測試：Handle Existing Instance Activation Queues Gui Scan Paths")]
+    public void HandleExistingInstanceActivation_QueuesGuiScanPaths()
+    {
+        ScanQueueIpc.DrainPaths();
+        Program.SetStartupActivationForTest(false, [@"C:\temp\queued.py", @"C:\temp\skills"]);
+
+        try
+        {
+            Program.HandleExistingInstanceActivation();
+
+            var queuedPaths = ScanQueueIpc.DrainPaths();
+
+            Assert.Equal(2, queuedPaths.Count);
+            Assert.Equal(@"C:\temp\queued.py", queuedPaths[0]);
+            Assert.Equal(@"C:\temp\skills", queuedPaths[1]);
+        }
+        finally
+        {
+            Program.SetStartupActivationForTest(false);
+            ScanQueueIpc.DrainPaths();
+        }
+    }
+
     [Fact]
     public void ResolveScannableFiles_ExpandsDirectories_AndIncludesMarkdownFiles()
     {
