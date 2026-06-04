@@ -31,7 +31,7 @@ internal static class ProgramEntry
 
         if (string.IsNullOrWhiteSpace(modelPath))
         {
-            Console.Error.WriteLine("Missing model path. Provide --model <path>, set PHILCHE_GUARD_MODEL_PATH, configure GuardModelPath in Settings.yaml, or place a GGUF under %LOCALAPPDATA%/Philche/models.");
+            Console.Error.WriteLine("Missing model path. Provide --model <path>, set PHILCHE_GUARD_MODEL_PATH, configure GuardModelPath in settings.yaml, or place a GGUF under %LOCALAPPDATA%/Philche/models.");
             return 1;
         }
 

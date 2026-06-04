@@ -475,19 +475,10 @@ public sealed class SettingsYamlStore : ISettingsYamlStore
             return Path.GetFullPath(envPath);
         }
 
-        var currentDirectoryPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Settings.yaml"));
-        if (File.Exists(currentDirectoryPath))
-        {
-            return currentDirectoryPath;
-        }
-
-        var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-        if (!string.IsNullOrWhiteSpace(desktopDirectory))
-        {
-            return Path.GetFullPath(Path.Combine(desktopDirectory, "Settings.yaml"));
-        }
-
-        return currentDirectoryPath;
+        var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var root = Path.Combine(localAppData, "Philche");
+        Directory.CreateDirectory(root);
+        return Path.Combine(root, "settings.yaml");
     }
 
     private SettingsYamlDocument LoadDocumentOrDefault()
