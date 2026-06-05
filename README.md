@@ -7,157 +7,156 @@
 
 ---
 
-## 概述 Overview
+## Overview
 
-`Philche`是一個常駐系統列的安全守護程式，在本機離線掃描 AI Agent 的 skill 提示詞（`.md`）與腳本檔案（`.js`、`.py` 等），偵測惡意提示詞注入、資料外洩意圖、危險腳本行為，並即時以 Toast 通知提醒你。
+`Philche` is a security daemon that resides in the system tray. It scans AI Agent's skill prompts (`.md`) and script files (`.js`, `.py`, etc.) offline on the local machine, detects malicious prompt word injection, data leakage intentions, and dangerous script behaviors, and instantly reminds you with Toast notifications.
 
-**一切分析皆在你的電腦上進行，不傳送任何資料至外部伺服器。**
+**All analysis is performed on your computer and no data is sent to external servers. **
 
-> AI 時代的咒語是提示詞。這個世界不缺多采多姿的傑出魔法師，但缺少一個呆板無趣、卻盡職盡責的管理員。Philche 就是那個管理員。
-
----
-
-## 支援的 AI Agent
-
-Philche 可自動探索以下 Agent 安裝的 skill 路徑，包含 WSL 環境：
-
-| Agent | 備註 |
-|---|---|
-| GitHub Copilot CLI | `~/.copilot/skills/` |
-| OpenAI Codex CLI | `~/.codex/skills/` |
-| Google Gemini CLI | `~/.gemini/skills/` |
-| Anthropic Claude Code | `~/.claude/skills/` |
-| Anthropic Claude Cowork | `~/.cowork/skills/` |
-| OpenClaw | 支援整合掃描 |
+>The mantra of the AI era is the prompt word. The world does not lack colorful and outstanding magicians, but it lacks a boring but dedicated caretaker. Philche is that caretaker.
 
 ---
 
-## 功能特色 Features
+## Supported AI Agents
 
-### 🔍 多層掃描引擎
+Philche can automatically explore the skill paths of the following Agent installations, including WSL environments:
 
-| 引擎 | 偵測項目 |
-|---|---|
-| **關鍵字 / 規則偵測** | 惡意指令詞組（`ignore previous instructions`、`jailbreak`、`exfiltrate`...）、Unicode 隱形字元（零寬字元、BiDi 控制符）、危險 Regex 樣式 |
-| **程式碼掃描（YARA 風格）** | 腳本中的可疑 shell 執行、憑證竊取、編碼 payload 等模式 |
-| **LLM 意圖分類** | 使用 **Llama Guard 3 8B** 量化模型在本機推論 skill 意圖，無需 GPU |
-| **語意相似度偵測** | 比對已知惡意樣本的語意相似程度 |
-
-### 🔔 通知與排程
-
-- **定期掃描**：可自訂間隔（預設 60 分鐘）
-- **即時監控**：檔案變更時自動觸發掃描
-- **增量掃描**：跳過未變更檔案，節省資源
-- **Toast 通知**：發現風險時即時彈出提醒
-- **風險等級**：`低 Low` / `中 Medium` / `高 High`
-
-### 🖥️ 其他特色
-
-- 系統列常駐，右鍵選單快速操作
-- Windows 檔案總管右鍵整合（對資料夾直接觸發掃描）
-- 設定視窗：Findings 列表、Agent 管理、模型路徑、語言切換
+| Agents                  | Skill paths                 |
+|-------------------------|-----------------------------|
+| GitHub Copilot CLI      | `~/.copilot/skills/`        |
+| OpenAI Codex CLI        | `~/.codex/skills/`          |
+| Google Gemini CLI       | `~/.gemini/skills/`         |
+| Anthropic Claude Code   | `~/.claude/skills/`         |
+| Anthropic Claude Cowork | `~/.cowork/skills/`         |
+| OpenClaw                | Support integrated scanning |
 
 ---
 
-## 系統需求 Requirements
+## Features
 
-| 項目 | 需求 |
-|---|---|
-| 作業系統 | Windows 10 / 11（64-bit） |
-| 執行框架 | [.NET 10 Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) |
-| 記憶體 | 建議 4 GB 以上（LLM 掃描模式需約 3 GB） |
-| GPU | **不需要**（純 CPU 推論） |
-| 磁碟空間 | 約 5 GB（含 Llama Guard 模型） |
+### 🔍 Multi-layer scan engine
+
+| Layers                            | Detection items                                                                                                                                                                                 |
+|-----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Keyword/Rule Detection**        | Malicious command phrases (`ignore previous instructions`, `jailbreak`, `exfiltrate`...), Unicode invisible characters (zero-width characters, BiDi control characters), dangerous Regex styles |
+| **Code scanning (YARA style)**    | Suspicious shell execution, credential theft, encoded payload and other patterns in scripts                                                                                                     |
+| **LLM intent classification**     | Use the **Llama Guard 3 8B**quantized model to infer skill intent natively, no GPU required                                                                                                     |
+| **Semantic similarity detection** | Compare the semantic similarity of known malicious samples                                                                                                                                      |
+
+### 🔔 Notifications and Scheduling
+
+- **Periodic scan**: Customizable interval (default 60 minutes)
+- **Real-time monitoring**: Automatically trigger scanning when files change
+- **Incremental Scan**: Skip unchanged files to save resources
+- **Toast Notification**: Instant pop-up reminder when a risk is discovered
+- **Risk Level**: `Low`, `Medium`, `High`
+
+### 🖥️ Other features
+
+- Permanent system bar, right-click menu for quick operation
+- Windows File Explorer right-click integration (directly triggers scanning of folders)
+- Setting window: Findings list, Agent management, Model path, Language switching
 
 ---
 
-## 安裝與設定 Installation
+## System requirements
 
-### 1. 建置
+| Environment         | Requirements                                                         |
+|---------------------|----------------------------------------------------------------------|
+| Operating system    | Windows 10/11 (64-bit)                                               |
+| Execution Framework | [.NET 10 Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) |
+| Memory              | 4 GB or more recommended (LLM scan mode requires about 3 GB)         |
+| GPU                 | **Not required**(Pure CPU inference)                                 |
+| Disk Space          | Approximately 5 GB (with Llama Guard model)                          |
 
-確認已安裝 [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)，然後執行：
+---
 
-```powershell
-git clone https://github.com/your-org/Philche.git
+## Installation
+
+### 1. How to build
+
+Confirm that [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) is installed, then execute:
+
+```cmd
+git clone https://github.com/tzengshinfu/Philche.git
 cd Philche
 dotnet build ./Philche/Philche.slnx
 ```
 
-### 2. 下載 LLM 安全模型
+### 2. Download the LLM security model
 
-Philche 使用 **Llama Guard 3 8B Q4_K_M** 進行本機意圖分類。首次啟動後：
+Philche uses **Llama Guard 3 8B Q4_K_M**for native intent classification. After first boot:
 
-1. 在系統列圖示上按右鍵 → **設定**
-2. 切換到 **模型（Models）** 頁籤
-3. 確認模型名稱為 `Llama-Guard-3-8B-Q4_K_M-GGUF`，點擊 **下載**
-4. 等待下載完成（模型約 4–5 GB，來源：HuggingFace）
+1. Right-click on the system tray icon → **Settings**
+2. Switch to the **Models**tab
+3. Confirm that the model name is `Llama-Guard-3-8B-Q4_K_M-GGUF` and click **Download**
+4. Wait for the download to complete (model approximately 4–5 GB, source: HuggingFace)
 
-> 也可手動下載 `.gguf` 檔案後，在模型路徑欄位直接指定本機路徑。
+> You can also manually download the `.gguf` file and directly specify the local path in the model path field.
 
-### 3. 執行
+### 3. Run
 
-```powershell
-./Philche/Philche.Tray/bin/Debug/net10.0-windows/Philche.Tray.exe
+```cmd
+./Philche/Philche.Tray/bin/Debug/net10.0/Philche.Tray.exe
 ```
 
-啟動後 Philche 將常駐於系統列（工作列右側通知區域）。
+After startup, Philche will reside in the system tray (notification area on the right side of the taskbar).
 
 ---
 
-## 使用方法 Usage
+## Usage
 
-### 系統列右鍵選單
+### System tray context menu
 
-| 選項 | 說明 |
-|---|---|
-| 立即掃描 | 對所有已設定的 Agent skill 路徑執行一次掃描 |
-| 設定 | 開啟設定視窗（Agent 管理、模型路徑、排程設定） |
-| 定期掃描 | 開啟 / 關閉定時掃描 |
-| 即時監控 | 開啟 / 關閉檔案變更自動掃描 |
-| 結束 | 退出程式 |
+| Options              | Descriptions                                                               |
+|----------------------|----------------------------------------------------------------------------|
+| Scan now             | Perform a scan of all configured Agent skill paths                         |
+| Settings             | Open the settings window (Agent management, model path, schedule settings) |
+| Periodic scan        | Turn on/off scheduled scan                                                 |
+| Real-time monitoring | Turn on/off automatic scanning of file changes                             |
+| End                  | Exit program                                                               |
 
-### 從檔案總管掃描
+### Scan from File Explorer
 
-在任意資料夾上按右鍵，選擇 **「使用 Philche 掃描」**，即可對該資料夾內的 skill 檔案執行即時掃描。
+Right-click on any folder and select "Scan with Philche" to perform an instant scan of the skill files in the folder.
 
-### CLI 一次性掃描模式
+### CLI one-time scan mode
 
-Philche 預設會以 GUI 常駐模式啟動；若要在命令列中做一次性掃描並結束，可加入 `--cli`：
+Philche will start in GUI resident mode by default; if you want to do a one-time scan and end it in the command line, you can add `--cli`:
 
-```powershell
-# 掃描單一檔案
+```cmd
+:: Scan a single file
 ./Philche/Philche.Tray/bin/Debug/net10.0-windows/Philche.Tray.exe --cli --scan "C:\agents\SKILL.md"
 
-# 掃描整個目錄
+:: Scan the entire directory
 ./Philche/Philche.Tray/bin/Debug/net10.0-windows/Philche.Tray.exe --cli --scan "C:\agents"
 
-# 以 JSON 輸出結果
+:: Output results as JSON
 ./Philche/Philche.Tray/bin/Debug/net10.0-windows/Philche.Tray.exe --cli --scan "C:\agents" --format json
 ```
 
-- `--scan`：可接一個或多個檔案或目錄。
-- `--format text|json`：輸出格式，預設為 `text`。
-- 目錄會自動遞迴展開為 Philche 支援的可掃描檔案類型。
+- `--scan`: can access one or more files or directories.
+- `--format text|json`: Output format, default is `text`.
+- The directory will automatically expand recursively into scannable file types supported by Philche.
 
 CLI exit code：
+| Codes | Descriptions                                     |
+|-------|--------------------------------------------------|
+| `0`   | All scan results are `Low`                       |
+| `1`   | At least one result is `Medium`                  |
+| `2`   | At least one result is `High`                    |
+| `3`   | Parameter error, target not found or scan failed |
 
-| Code | 說明 |
-|---|---|
-| `0` | 所有掃描結果皆為 `Low` |
-| `1` | 至少一個結果為 `Medium` |
-| `2` | 至少一個結果為 `High` |
-| `3` | 參數錯誤、找不到目標或掃描失敗 |
+### View scan results
 
-### 查看掃描結果
-
-發現風險時，Windows 右下角會彈出 Toast 通知。  
-完整的 Findings 清單可在設定視窗的主頁面查看，包含風險等級、觸發原因與受影響檔案路徑。
+When a risk is discovered, a Toast notification will pop up in the lower right corner of Windows.  
+The complete list of Findings can be viewed on the main page of the settings window, including risk levels, triggering reasons and affected file paths.
 
 ---
 
-## 設定檔 Configuration
+## Configuration
 
-設定以 YAML 格式儲存（預設路徑可透過環境變數 `PHILCHE_SETTINGS_YAML_PATH` 覆蓋）：
+Settings are stored in YAML format (the default path can be overridden via the environment variable `PHILCHE_SETTINGS_YAML_PATH`):
 
 ```yaml
 version: 1
@@ -181,13 +180,13 @@ shell:
   contextMenuEnabled: true
 ```
 
-惡意詞組清單會從與 `Settings.yaml` 同目錄的 `malicious-phrases.txt` 載入：
+The list of malicious phrases will be loaded from `malicious-phrases.txt` in the same directory as `settings.yaml`:
 
-- 每行一個詞組
-- `#` 開頭視為註解
-- 若檔案不存在，Philche 會自動建立一份預設清單，供後續直接編輯
+- One phrase per line
+- Anything starting with `#` is treated as a comment
+- If the file does not exist, Philche will automatically create a default list for subsequent direct editing
 
-範例：
+Example:
 
 ```text
 # Prompt injection / jailbreak
@@ -199,14 +198,14 @@ jailbreak
 越獄
 ```
 
-危險樣式 Regex 規則會從與 `Settings.yaml` 同目錄的 `dangerous-patterns.txt` 載入：
+Dangerous pattern Regex rules will be loaded from `dangerous-patterns.txt` in the same directory as `settings.yaml`:
 
-- 每行一條 Regex 規則
-- `#` 開頭視為註解
-- 若檔案不存在，Philche 會自動建立一份預設規則檔
-- 無效 Regex 會被忽略，不會讓整體掃描失敗
+- One Regex rule per line
+- Anything starting with `#` is treated as a comment
+- If the file does not exist, Philche will automatically create a default rule file
+- Invalid Regex will be ignored and will not cause the overall scan to fail
 
-範例：
+Example:
 
 ```text
 # Dangerous regex patterns
@@ -217,26 +216,26 @@ credit\s*card
 
 ---
 
-## 開發者資訊 For Developers
+## Tests for Developers
 
-```powershell
-# 執行單元測試（排除需要環境的整合測試）
+```cmd
+:: Execute unit tests (excluding integration tests that require an environment)
 dotnet test ./Philche/Philche.Core.Test/Philche.Core.Test.csproj `
   --filter "FullyQualifiedName!~OpenClawScanIntegrationTests"
 
-# 執行 OpenClaw 整合測試
+:: Execute OpenClaw integration tests
 dotnet test ./Philche/Philche.Core.Test/Philche.Core.Test.csproj `
   --filter "FullyQualifiedName~OpenClawScanIntegrationTests"
 ```
 
 ---
 
-## 免責聲明 Disclaimer
+## Disclaimer
 
-Philche 的掃描結果為輔助判斷，不構成絕對的安全保證。LLM 分類模型可能出現誤判（false positive / false negative）。安裝或執行 skill 前，請自行評估風險。
+Philche's scan results are for auxiliary judgment and do not constitute an absolute security guarantee. The LLM classification model may cause misjudgments (false positive /false negative). Please evaluate your own risks before installing or executing a skill.
 
 ---
 
-## 授權 License
+## License
 
-本專案的第三方授權資訊請參閱 [THIRD-PARTY-LICENSES/](THIRD-PARTY-LICENSES/) 資料夾。
+For third-party licensing information for this project, please refer to the [THIRD-PARTY-LICENSES/](THIRD-PARTY-LICENSES/) folder.
