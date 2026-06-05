@@ -357,7 +357,7 @@ public sealed class TrayIntegrationTests
 
     private sealed class FakeSettingsStore : ISettingsYamlStore
     {
-        public string FilePath => Path.Combine(Path.GetTempPath(), "Philche", "Settings.yaml");
+        public string FilePath => Path.Combine(Path.GetTempPath(), "Philche", "settings.yaml");
 
         public ModelPathsConfig ModelPaths { get; set; } = new();
         public ScanningConfig Scanning { get; set; } = new();

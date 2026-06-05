@@ -109,7 +109,7 @@ public sealed class PromptRiskScanExecutorTests
 
     private sealed class FakeSettingsStore : ISettingsYamlStore
     {
-        public string FilePath => "Settings.yaml";
+        public string FilePath => "settings.yaml";
 
         public IReadOnlyList<KnownAgentCatalogEntry> LoadCatalog() => [];
 

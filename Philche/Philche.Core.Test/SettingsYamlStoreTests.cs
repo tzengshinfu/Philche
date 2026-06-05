@@ -12,7 +12,7 @@ public sealed class SettingsYamlStoreTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
 
         try
         {
@@ -36,7 +36,7 @@ public sealed class SettingsYamlStoreTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
 
         try
         {
@@ -75,7 +75,7 @@ public sealed class SettingsYamlStoreTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
 
         try
         {
@@ -117,7 +117,7 @@ public sealed class SettingsYamlStoreTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
 
         try
         {
@@ -142,7 +142,7 @@ public sealed class SettingsYamlStoreTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
 
         try
         {
@@ -191,7 +191,7 @@ public sealed class SettingsYamlStoreTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
 
         try
         {
@@ -218,7 +218,7 @@ public sealed class SettingsYamlStoreTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
 
         try
         {
@@ -245,7 +245,7 @@ public sealed class SettingsYamlStoreTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
 
         try
         {
@@ -280,7 +280,7 @@ public sealed class SettingsYamlStoreTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
 
         try
         {
@@ -318,7 +318,7 @@ public sealed class SettingsYamlStoreTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
 
         try
         {
@@ -368,7 +368,7 @@ public sealed class SettingsYamlStoreTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
 
         try
         {
@@ -418,7 +418,7 @@ public sealed class SettingsYamlStoreTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
 
         try
         {

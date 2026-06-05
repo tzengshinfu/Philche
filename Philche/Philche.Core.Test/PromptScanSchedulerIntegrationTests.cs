@@ -146,7 +146,7 @@ public sealed class PromptScanSchedulerIntegrationTests
 
     private class FakeSettingsStore : ISettingsYamlStore
     {
-        public string FilePath => "Settings.yaml";
+        public string FilePath => "settings.yaml";
 
         public IReadOnlyList<KnownAgentCatalogEntry> LoadCatalog() => [];
 

@@ -99,7 +99,7 @@
 
                     <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
                         <Button x:Name="ApplySelectedButton" Content="Apply To Selected" Width="150" Click="ApplySelected_Click" />
-                        <Button x:Name="SaveSettingsButton" Content="Save Settings.yaml" Width="170" Click="Save_Click" />
+                        <Button x:Name="SaveSettingsButton" Content="Save settings.yaml" Width="170" Click="Save_Click" />
                     </StackPanel>
                 </Grid>
             </TabItem>

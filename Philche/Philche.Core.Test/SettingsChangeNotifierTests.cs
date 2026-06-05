@@ -9,7 +9,7 @@ public sealed class SettingsChangeNotifierTests
     {
         var tempDir = Path.Combine(Path.GetTempPath(), $"philche-settings-watch-{Guid.NewGuid():N}");
         Directory.CreateDirectory(tempDir);
-        var settingsPath = Path.Combine(tempDir, "Settings.yaml");
+        var settingsPath = Path.Combine(tempDir, "settings.yaml");
         File.WriteAllText(settingsPath, "version: 1\n", System.Text.Encoding.UTF8);
 
         try

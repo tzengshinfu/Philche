@@ -251,7 +251,7 @@ public sealed class EvaluatorFactoryTests
 
     private sealed class FakeSettingsStore : ISettingsYamlStore
     {
-        public string FilePath => "Settings.yaml";
+        public string FilePath => "settings.yaml";
 
         public ModelPathsConfig ModelPaths { get; set; } = new();
         public ScanningConfig Scanning { get; set; } = new();
