@@ -196,7 +196,10 @@
 
                     <Border Grid.Row="5" BorderThickness="1" Padding="10">
                         <StackPanel Spacing="8">
-                            <TextBlock x:Name="GuardModelTitleTextBlock" FontWeight="SemiBold" Text="Guard Model (Llama Guard 3)" />
+                            <StackPanel Spacing="8" Orientation="Horizontal">
+                                <TextBlock x:Name="GuardModelTitleTextBlock" FontWeight="SemiBold" Text="Guard Model (Llama Guard 3)" />
+                                <TextBlock x:Name="ModelsLlamaLinkTextBlock" Text="https://llama.meta.com" Opacity="0.7" />
+                            </StackPanel>
                             <TextBlock Text="Model Name" FontWeight="SemiBold" />
                             <TextBox x:Name="GuardModelNameTextBox" Width="780" Watermark="HuggingFace model name (e.g. Llama-Guard-3-8B-Q4_K_M-GGUF)" />
                             <StackPanel Orientation="Horizontal" Spacing="8">
@@ -214,8 +217,19 @@
                         <Button x:Name="RefreshModelsButton" Content="Refresh Models" Width="140" Click="RefreshModels_Click" />
                     </StackPanel>
 
-                    <TextBlock Grid.Row="7" x:Name="ModelsBuiltWithLlamaTextBlock" Text="Built with Llama" Opacity="0.85" />
-                    <TextBlock Grid.Row="8" x:Name="ModelsLlamaLinkTextBlock" Text="https://llama.meta.com" Opacity="0.7" />
+                    <TextBlock Grid.Row="7" x:Name="ModelsBuiltWithLlamaTextBlock" Text="API Key" FontWeight="SemiBold" />
+
+                    <Border Grid.Row="8" BorderThickness="1" Padding="10">
+                        <StackPanel Spacing="8">
+                            <TextBlock x:Name="VirusTotalApiKeyLabelTextBlock"
+                                       Text="VirusTotal API Key"
+                                       FontWeight="SemiBold"
+                                       Margin="0,8,0,0" />
+                            <TextBox x:Name="VirusTotalApiKeyTextBox"
+                                     Width="520"
+                                     Watermark="Enter VT_API_KEY" />
+                        </StackPanel>
+                    </Border>
                 </Grid>
             </TabItem>
 
@@ -224,7 +238,7 @@
                     <TextBlock x:Name="ScanOptionsHeaderTextBlock"
                                FontWeight="SemiBold"
                                Text="Scan Options" />
-                        <Button x:Name="ScanOptionsHelpButton"
+                    <Button x:Name="ScanOptionsHelpButton"
                             HorizontalAlignment="Right"
                             Width="110"
                             Content="Help"
@@ -241,15 +255,6 @@
                                   Content="Add Scan directory context menu"
                                   IsCheckedChanged="ScanDirectoryContextMenuCheckBox_Changed" />
                     </StackPanel>
-                    <TextBlock x:Name="VirusTotalApiKeyLabelTextBlock"
-                               Grid.Row="3"
-                               Text="VirusTotal API Key"
-                               FontWeight="SemiBold"
-                               Margin="0,8,0,0" />
-                    <TextBox x:Name="VirusTotalApiKeyTextBox"
-                             Grid.Row="4"
-                             Width="520"
-                             Watermark="Enter VT_API_KEY" />
                 </Grid>
             </TabItem>
         </TabControl>
